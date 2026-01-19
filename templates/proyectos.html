@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Proyectos</title>
+</head>
+<body>
+  <h1>Proyectos</h1>
+  <a href="/">Volver</a>
+  <hr>
+
+  {% for p in proyectos %}
+    <h2>{{ p.titulo }}</h2>
+    <p>{{ p.descripcion }}</p>
+    <p><b>Tecnologías:</b> {{ p.tecnologias }}</p>
+
+    {% if p.imagen %}
+      <p><img src="{{ p.imagen.url }}" style="max-width:300px;"></p>
+    {% endif %}
+
+    {% if p.documento %}
+      <p><a href="{{ p.documento.url }}" target="_blank">Ver documento</a></p>
+    {% endif %}
+
+    {% if p.url_demo %}<p><a href="{{ p.url_demo }}" target="_blank">Demo</a></p>{% endif %}
+    {% if p.url_repo %}<p><a href="{{ p.url_repo }}" target="_blank">Repositorio</a></p>{% endif %}
+    <hr>
+  {% empty %}
+    <p>No hay proyectos aún.</p>
+  {% endfor %}
+</body>
+</html>

@@ -1,0 +1,1283 @@
+{% load static %}
+{% load azure_tags %}
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>Hoja de Vida</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --secondary: #7c3aed;
+      --dark: #0f172a;
+      --dark-light: #1e293b;
+      --light: #f8fafc;
+      --light-gray: #e2e8f0;
+      --gray: #94a3b8;
+      --white: #ffffff;
+      --success: #10b981;
+      --shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+      --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.12);
+      --radius: 12px;
+      --radius-lg: 20px;
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      font-size: 15px;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: linear-gradient(135deg, #f0f9ff 0%, #f8fafc 100%);
+      color: var(--dark);
+      line-height: 1.6;
+      padding: 20px;
+      min-height: 100vh;
+    }
+
+    .toolbar {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      display: flex;
+      gap: 12px;
+      z-index: 1000;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(10px);
+      padding: 12px 16px;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      border: none;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: white;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4);
+    }
+
+    .btn-secondary {
+      background: var(--white);
+      color: var(--dark);
+      border: 1px solid var(--light-gray);
+    }
+
+    .btn-secondary:hover {
+      background: var(--light);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--primary);
+      border: 1px solid var(--primary);
+    }
+
+    .btn-outline:hover {
+      background: rgba(37, 99, 235, 0.05);
+      transform: translateY(-2px);
+    }
+
+    .cv-container {
+      transform: scale(0.90 );
+      transform-origin: top center;
+      max-width: 1200px;
+      margin: 80px auto 40px;
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-lg);
+      display: grid;
+      grid-template-columns: 350px 1fr;
+      min-height: calc(100vh - 120px);
+    }
+
+    .cv-sidebar {
+      background: linear-gradient(180deg, var(--dark) 0%, var(--dark-light) 100%);
+      padding: 40px 30px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cv-sidebar::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 100px;
+      height: 100px;
+      background: radial-gradient(circle, rgba(37, 99, 235, 0.2) 0%, transparent 70%);
+    }
+
+    .avatar-container {
+      text-align: center;
+      margin-bottom: 30px;
+      padding: 20px 0;
+    }
+
+    .avatar {
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      margin: 0 auto 20px;
+      border: 4px solid rgba(255, 255, 255, 0.15);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      background: linear-gradient(135deg, #2d3748, #4a5568);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: all 0.3s ease;
+    }
+
+    .avatar:hover img {
+      transform: scale(1.05);
+    }
+
+    .avatar-placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: rgba(255, 255, 255, 0.7);
+      font-weight: 600;
+      font-size: 14px;
+      text-align: center;
+      padding: 20px;
+      background: linear-gradient(135deg, #2d3748, #374151);
+    }
+
+    .avatar-placeholder svg {
+      margin-bottom: 10px;
+      opacity: 0.6;
+    }
+
+    .name {
+      font-size: 32px;
+      font-weight: 800;
+      color: white;
+      line-height: 1.2;
+      margin-bottom: 8px;
+      letter-spacing: -0.5px;
+    }
+
+    /* ===== NUEVO: TEXTO "SOBRE MÍ" DEBAJO DEL NOMBRE ===== */
+    .profile-description {
+      color: rgba(255, 255, 255, 0.85);
+      font-size: 15px;
+      font-weight: 400;
+      line-height: 1.5;
+      margin-top: 10px;
+      padding: 10px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      border-left: 3px solid var(--primary);
+    }
+
+    .section-title {
+      color: white;
+      font-size: 14px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+      position: relative;
+    }
+
+    .section-title::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 40px;
+      height: 2px;
+      background: var(--primary);
+    }
+
+    .info-item {
+      margin-bottom: 20px;
+      padding-left: 10px;
+      border-left: 2px solid transparent;
+      transition: var(--transition);
+    }
+
+    .info-item:hover {
+      border-left-color: var(--primary);
+      padding-left: 15px;
+    }
+
+    .info-label {
+      color: var(--gray);
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 4px;
+    }
+
+    .info-value {
+      color: white;
+      font-weight: 500;
+      font-size: 15px;
+    }
+
+    .info-value a {
+      color: #dbeafe;
+      text-decoration: none;
+      transition: var(--transition);
+    }
+
+    .info-value a:hover {
+      color: white;
+      text-decoration: underline;
+    }
+
+    .cv-content {
+      padding: 50px 40px;
+      background: var(--white);
+      overflow-y: auto;
+    }
+
+    .content-section {
+      margin-bottom: 40px;
+      padding-bottom: 30px;
+      border-bottom: 1px solid var(--light-gray);
+    }
+
+    .content-section:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .content-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--dark);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .content-title::before {
+      content: '';
+      width: 6px;
+      height: 24px;
+      background: var(--primary);
+      border-radius: 3px;
+    }
+
+    .section-text {
+      color: #475569;
+      font-size: 16px;
+      line-height: 1.7;
+      margin-bottom: 20px;
+    }
+
+    .timeline-item {
+      display: grid;
+      grid-template-columns: 100px 1fr;
+      gap: 30px;
+      margin-bottom: 30px;
+      padding: 20px;
+      border-radius: var(--radius);
+      background: var(--white);
+      border: 1px solid transparent;
+      transition: var(--transition);
+      position: relative;
+    }
+
+    .timeline-item:hover {
+      border-color: var(--light-gray);
+      box-shadow: var(--shadow);
+      transform: translateY(-2px);
+    }
+
+    .timeline-year {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .timeline-year::before {
+      content: '';
+      width: 12px;
+      height: 12px;
+      background: var(--primary);
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .timeline-content {
+      flex: 1;
+    }
+
+    .timeline-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--dark);
+      margin-bottom: 8px;
+    }
+
+    .timeline-subtitle {
+      font-size: 15px;
+      color: var(--gray);
+      margin-bottom: 12px;
+      font-weight: 500;
+    }
+
+    .timeline-description {
+      color: #64748b;
+      font-size: 15px;
+      line-height: 1.6;
+      margin-bottom: 15px;
+    }
+
+    .certificate-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .skills-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .skill-tag {
+      background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+      color: var(--primary-dark);
+      padding: 8px 16px;
+      border-radius: 50px;
+      font-size: 14px;
+      font-weight: 600;
+      border: 1px solid #bae6fd;
+      transition: var(--transition);
+    }
+
+    .skill-tag:hover {
+      background: linear-gradient(135deg, #e0f2fe, #bae6fd);
+      transform: translateY(-2px);
+    }
+
+    .products-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      margin-top: 20px;
+    }
+
+    .product-column {
+      background: #f8fafc;
+      padding: 24px;
+      border-radius: var(--radius);
+      border: 1px solid var(--light-gray);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+    }
+
+    .product-column-title {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--dark);
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid var(--light-gray);
+      letter-spacing: 0.5px;
+    }
+
+    .product-item {
+      margin-bottom: 24px;
+      padding-bottom: 18px;
+      border-bottom: 1px dashed var(--light-gray);
+    }
+
+    .product-item:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .product-name {
+      font-weight: 700;
+      color: var(--dark);
+      margin-bottom: 10px;
+      font-size: 16px;
+      line-height: 1.4;
+      margin-top: 12px;
+    }
+
+    .product-description {
+      font-size: 15px;
+      color: #64748b;
+      line-height: 1.7;
+      margin-top: 8px;
+      margin-bottom: 12px;
+    }
+
+    .product-item .skill-tag {
+      background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+      color: var(--primary-dark);
+      padding: 8px 16px;
+      border-radius: 50px;
+      font-size: 13px;
+      font-weight: 700;
+      border: 1px solid #bae6fd;
+      transition: var(--transition);
+      margin-bottom: 12px;
+      display: inline-block;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--gray);
+      font-style: italic;
+      background: #f8fafc;
+      border-radius: var(--radius);
+      border: 2px dashed #e2e8f0;
+    }
+
+    @media print {
+      body {
+        background: white;
+        padding: 0;
+      }
+      
+      .toolbar {
+        display: none;
+      }
+      
+      .cv-container {
+        margin: 0;
+        box-shadow: none;
+        border-radius: 0;
+        min-height: auto;
+      }
+      
+      .btn {
+        display: none;
+      }
+    }
+
+    @media (max-width: 992px) {
+      .cv-container {
+        grid-template-columns: 1fr;
+        margin: 100px auto 20px;
+      }
+      
+      .cv-sidebar {
+        padding: 30px 20px;
+      }
+      
+      .toolbar {
+        top: 10px;
+        right: 10px;
+        flex-wrap: wrap;
+        justify-content: center;
+        width: calc(100% - 20px);
+      }
+      
+      .products-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .timeline-item {
+        grid-template-columns: 1fr;
+        gap: 15px;
+      }
+      
+      .cv-content {
+        padding: 30px 20px;
+      }
+      
+      .name {
+        font-size: 28px;
+      }
+      
+      .content-title {
+        font-size: 20px;
+      }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .cv-sidebar, .cv-content {
+      animation: fadeIn 0.6s ease-out;
+    }
+
+    .cv-content::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .cv-content::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 4px;
+    }
+
+    .cv-content::-webkit-scrollbar-thumb {
+      background: #c1c1c1;
+      border-radius: 4px;
+    }
+
+    .cv-content::-webkit-scrollbar-thumb:hover {
+      background: #a1a1a1;
+    }
+
+    /* ====== MODO OSCURO ====== */
+    body {
+      background: linear-gradient(135deg, #060a13 0%, #0b1220 100%);
+      color: #e5e7eb;
+    }
+
+    .cv-container {
+      background: #0b1220;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .cv-content {
+      background: #0b1220;
+      color: #e5e7eb;
+    }
+
+    .content-title {
+      color: #f8fafc;
+    }
+
+    .section-text,
+    .timeline-description,
+    .product-description {
+      color: #cbd5e1;
+    }
+
+    .timeline-item {
+      background: #0f172a;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .timeline-title {
+      color: #f8fafc;
+    }
+
+    .timeline-subtitle {
+      color: #94a3b8;
+    }
+
+    .product-column {
+      background: #0f172a;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .product-column-title {
+      color: #f8fafc;
+      border-bottom-color: rgba(255,255,255,0.08);
+    }
+
+    .empty-state {
+      background: #0f172a;
+      border-color: rgba(255,255,255,0.12);
+      color: #94a3b8;
+    }
+
+    .toolbar {
+      background: rgba(15, 23, 42, 0.75);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .btn-secondary {
+      background: rgba(255,255,255,0.06);
+      color: #e5e7eb;
+      border-color: rgba(255,255,255,0.10);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255,255,255,0.10);
+    }
+
+    .btn-outline {
+      color: #93c5fd;
+      border-color: #93c5fd;
+    }
+
+    .btn-outline:hover {
+      background: rgba(147, 197, 253, 0.10);
+    }
+
+
+    /* =============================
+   FORMATO DE IMPRESIÓN CV A4
+   ============================= */
+@media print {
+
+  @page {
+    size: A4;
+    margin: 1.2cm;
+  }
+
+  body {
+    background: white !important;
+    color: #111827 !important;
+    padding: 0;
+    font-size: 11.5pt;
+  }
+
+  .toolbar,
+  .btn,
+  .cv-content::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  .cv-container {
+    display: grid !important;
+    grid-template-columns: 32% 68%;
+    max-width: 100%;
+    min-height: auto;
+    margin: 0;
+    border-radius: 0;
+    box-shadow: none;
+    background: white;
+  }
+
+  /* ===== COLUMNA IZQUIERDA ===== */
+  .cv-sidebar {
+    background: #1e3a8a !important;
+    color: white !important;
+    padding: 24px 18px;
+  }
+
+  .name {
+    font-size: 20pt;
+    margin-bottom: 10px;
+    color: rgb(73, 73, 73) !important;
+  }
+
+  .section-title {
+    font-size: 10pt;
+    border-bottom: 1px solid rgba(255,255,255,0.3);
+    margin-top: 20px;
+    color: rgb(148, 144, 144) !important;
+  }
+
+  .info-label {
+    font-size: 8pt;
+    color: #5a4a4a !important;
+  }
+
+  .info-value {
+    font-size: 9.5pt;
+    color: white !important;
+  }
+
+  /* FOTO */
+  .avatar {
+    width: 120px;
+    height: 120px;
+    border: 3px solid white;
+    box-shadow: none;
+  }
+
+  /* ===== COLUMNA DERECHA ===== */
+  .cv-content {
+    padding: 26px 28px;
+    background: white !important;
+    color: #111827 !important;
+  }
+
+  .content-section {
+    margin-bottom: 18px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .content-title {
+    font-size: 14pt;
+    color: #1e3a8a !important;
+  }
+
+  .section-text {
+    font-size: 11pt;
+    line-height: 1.5;
+  }
+
+  /* TIMELINE */
+  .timeline-item {
+    grid-template-columns: 70px 1fr;
+    padding: 8px 0;
+    border: none;
+    box-shadow: none;
+    background: transparent;
+  }
+
+  .timeline-year {
+    font-size: 9pt;
+    color: #1e40af !important;
+  }
+
+  .timeline-title {
+    font-size: 11pt;
+    font-weight: 700;
+  }
+
+  .timeline-subtitle {
+    font-size: 9.5pt;
+    color: #374151;
+  }
+
+  .timeline-description {
+    font-size: 10pt;
+    color: #374151;
+  }
+
+  /* BOTONES CERTIFICADOS OCULTOS */
+  .certificate-actions {
+    display: none !important;
+  }
+
+  /* SECCIONES NO TÍPICAS DE CV */
+  section:has(h2:contains("Venta garage")) {
+    display: none !important;
+  }
+
+}
+
+@media print {
+
+  /* Más contraste general */
+  body{
+    color: #111827 !important;
+  }
+
+  /* Sidebar: que se lea perfecto */
+  .cv-sidebar{
+    background: #1e3a8a !important;
+    color: #ffffff !important;
+  }
+
+  .info-label{
+    color: #c04c38 !important;
+    font-weight: 700 !important;
+  }
+
+  .info-value{
+    color: #ffffff !important;
+    font-weight: 600 !important;
+  }
+
+  /* Textos del contenido: más oscuros */
+  .section-text,
+  .timeline-description,
+  .product-description{
+    color: #111827 !important;
+  }
+
+  .timeline-subtitle{
+    color: #1f2937 !important;
+  }
+
+  /* Separador vertical también en impresión */
+  .cv-sidebar{
+    border-right: 3px solid #1d4ed8 !important;
+  }
+
+  /* “Sobre mí” bajo el nombre, versión impresión */
+  .about-inline{
+    color: #fde68a !important;   /* amarillo suave, destaca mucho */
+    background: rgba(255,255,255,0.10) !important;
+    border-left: 3px solid rgba(255,255,255,0.45) !important;
+  }
+}
+
+/* ============================
+   SIDEBAR: mejor contraste (pantalla)
+   ============================ */
+.cv-sidebar .section-title{
+  color: #1e3a8a !important;
+}
+
+.cv-sidebar .info-label{
+  color: #43556d !important;   /* azul claro muy visible */
+  font-weight: 800 !important;
+  letter-spacing: 1.2px;
+}
+
+.cv-sidebar .info-value{
+  color: #616161 !important;   /* blanco sólido */
+  font-weight: 650 !important;
+}
+
+.cv-sidebar .info-value a{
+  color: #ffffff !important;
+  text-decoration: underline;
+}
+
+
+  </style>
+</head>
+
+<body>
+
+  <div class="toolbar">
+    <button class="btn btn-primary" onclick="window.print()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M6 9V2h12v7"></path>
+        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+        <path d="M6 14h12v8H6z"></path>
+      </svg>
+      Imprimir
+    </button>
+
+    {% if request.user.is_authenticated and request.user.is_staff %}
+      <a class="btn btn-secondary" href="/admin/" rel="nofollow">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+        </svg>
+        Admin
+      </a>
+    {% else %}
+      <a class="btn btn-secondary" href="/admin/login/?next=/admin/" rel="nofollow">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+          <polyline points="10 17 15 12 10 7"></polyline>
+          <line x1="15" y1="12" x2="3" y2="12"></line>
+        </svg>
+        Iniciar sesión
+      </a>
+    {% endif %}
+
+    {% if perfil and perfil.cv_pdf %}
+      <a class="btn btn-outline" href="{% azure_file_url perfil 'cv_pdf' %}?download=1" target="_blank" rel="noopener">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="7 10 12 15 17 10"></polyline>
+          <line x1="12" y1="15" x2="12" y2="3"></line>
+        </svg>
+        Descargar CV
+      </a>
+    {% endif %}
+  </div>
+
+  <div class="cv-container">
+    
+    <aside class="cv-sidebar">
+      {% load azure_tags %}
+
+      <div class="avatar-container">
+        <div class="avatar">
+          {% if perfil.foto %}
+            <img id="avatar-img" 
+                 src="{% azure_avatar_url perfil %}" 
+                 alt="Foto de perfil" 
+                 onerror="this.onerror=null; this.style.display='none'; document.getElementById('avatar-fallback').style.display='flex';"
+                 style="width:100%; height:100%; object-fit:cover;">
+            <div class="avatar-placeholder" id="avatar-fallback" style="display:none;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+              ERROR AL CARGAR
+            </div>
+          {% else %}
+            <div class="avatar-placeholder">
+              <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+              SIN FOTO
+            </div>
+          {% endif %}
+        </div>
+        
+        <h1 class="name">
+          {% if perfil %}
+            {{ perfil.nombres|default:"" }} {{ perfil.apellidos|default:"" }}
+          {% else %}
+            TU NOMBRE
+          {% endif %}
+        </h1>
+        
+        <!-- ===== NUEVO: TEXTO "SOBRE MÍ" DEBAJO DEL NOMBRE ===== -->
+        <div class="profile-description">
+          {% if perfil and perfil.descripcionperfil %}
+            {{ perfil.descripcionperfil }}
+          {% else %}
+            Estudiante de tercer nivel en la ULEAM
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="personal-info">
+        <h3 class="section-title">Contacto</h3>
+        
+        {% if perfil and perfil.numerocedula %}
+        <div class="info-item">
+          <div class="info-label">Identificación</div>
+          <div class="info-value">{{ perfil.numerocedula }}</div>
+        </div>
+        {% endif %}
+        
+        {% if perfil and perfil.telefonoconvencional %}
+        <div class="info-item">
+          <div class="info-label">Teléfono</div>
+          <div class="info-value">{{ perfil.telefonoconvencional }}</div>
+        </div>
+        {% endif %}
+        
+        {% if perfil and perfil.telefonofijo %}
+        <div class="info-item">
+          <div class="info-label">Teléfono fijo</div>
+          <div class="info-value">{{ perfil.telefonofijo }}</div>
+        </div>
+        {% endif %}
+        
+        {% if perfil and perfil.direcciondomiciliaria %}
+        <div class="info-item">
+          <div class="info-label">Dirección</div>
+          <div class="info-value">{{ perfil.direcciondomiciliaria }}</div>
+        </div>
+        {% endif %}
+        
+        {% if perfil and perfil.sitioweb %}
+        <div class="info-item">
+          <div class="info-label">Sitio web</div>
+          <div class="info-value">
+            <a href="{{ perfil.sitioweb }}" target="_blank" rel="noopener">{{ perfil.sitioweb }}</a>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+
+      <div class="personal-info">
+        <h3 class="section-title">Datos personales</h3>
+        
+        <div class="info-item">
+          <div class="info-label">Nacionalidad</div>
+          <div class="info-value">{{ perfil.nacionalidad|default:"—" }}</div>
+        </div>
+        
+        <div class="info-item">
+          <div class="info-label">Lugar de nacimiento</div>
+          <div class="info-value">{{ perfil.lugarnacimiento|default:"—" }}</div>
+        </div>
+        
+        <div class="info-item">
+          <div class="info-label">Fecha de nacimiento</div>
+          <div class="info-value">
+            {% if perfil and perfil.fechanacimiento %}
+              {{ perfil.fechanacimiento|date:"d/m/Y" }}
+            {% else %}
+              —
+            {% endif %}
+          </div>
+        </div>
+        
+        <div class="info-item">
+          <div class="info-label">Sexo</div>
+          <div class="info-value">{{ perfil.sexo|default:"—" }}</div>
+        </div>
+        
+        <div class="info-item">
+          <div class="info-label">Estado civil</div>
+          <div class="info-value">{{ perfil.estadocivil|default:"—" }}</div>
+        </div>
+        
+        <div class="info-item">
+          <div class="info-label">Licencia</div>
+          <div class="info-value">{{ perfil.licenciaconducir|default:"—" }}</div>
+        </div>
+      </div>
+    </aside>
+
+    <main class="cv-content">
+      <!-- ===== ELIMINADA: Sección "Sobre mí" del contenido principal ===== -->
+      
+      <section class="content-section">
+        <h2 class="content-title">Experiencia</h2>
+        
+        {% for e in experiencias %}
+          <div class="timeline-item">
+            <div class="timeline-year">
+              {% if e.fechainiciogestion %}
+                {{ e.fechainiciogestion|date:"Y" }}
+              {% else %}
+                —
+              {% endif %}
+            </div>
+            
+            <div class="timeline-content">
+              <h3 class="timeline-title">{{ e.cargodesempenado|default:"Cargo" }}</h3>
+              <div class="timeline-subtitle">
+                {% if e.nombrempresa %}
+                  {{ e.nombrempresa }}
+                {% endif %}
+                {% if e.lugarempresa %}
+                  • {{ e.lugarempresa }}
+                {% endif %}
+                {% if e.fechainiciogestion %}
+                  • {{ e.fechainiciogestion|date:"d/m/Y" }}
+                {% endif %}
+                {% if e.fechafingestion %}
+                  → {{ e.fechafingestion|date:"d/m/Y" }}
+                {% endif %}
+              </div>
+              
+              {% if e.descripcionfunciones %}
+                <p class="timeline-description">{{ e.descripcionfunciones }}</p>
+              {% endif %}
+              
+              {% if e.rutacertificado %}
+                <div class="certificate-actions">
+                  <a class="btn btn-outline" href="{% azure_file_url e 'rutacertificado' %}" target="_blank" rel="noopener">
+                    Vista previa
+                  </a>
+                  <a class="btn btn-primary" href="{% azure_file_url e 'rutacertificado' %}?download=1" rel="noopener">
+                    Descargar
+                  </a>
+                </div>
+              {% endif %}
+            </div>
+          </div>
+        {% empty %}
+          <div class="empty-state">No hay experiencia marcada para mostrar.</div>
+        {% endfor %}
+      </section>
+
+      <section class="content-section">
+        <h2 class="content-title">Cursos realizados</h2>
+        
+        {% for c in cursos %}
+          <div class="timeline-item">
+            <div class="timeline-year">
+              {% if c.fechainicio %}
+                {{ c.fechainicio|date:"Y" }}
+              {% else %}
+                —
+              {% endif %}
+            </div>
+            
+            <div class="timeline-content">
+              <h3 class="timeline-title">{{ c.nombrecurso }}</h3>
+              <div class="timeline-subtitle">
+                {{ c.entidadpatrocinadora }}
+                {% if c.totalhoras %}
+                  • {{ c.totalhoras }} horas
+                {% endif %}
+                {% if c.fechainicio %}
+                  • {{ c.fechainicio|date:"d/m/Y" }}
+                {% endif %}
+                {% if c.fechafin %}
+                  → {{ c.fechafin|date:"d/m/Y" }}
+                {% endif %}
+              </div>
+              
+              {% if c.descripcioncurso %}
+                <p class="timeline-description">{{ c.descripcioncurso }}</p>
+              {% endif %}
+              
+              {% if c.rutacertificado %}
+                <div class="certificate-actions">
+                  <a class="btn btn-outline" href="{% azure_file_url c 'rutacertificado' %}" target="_blank" rel="noopener">
+                    Vista previa
+                  </a>
+                  <a class="btn btn-primary" href="{% azure_file_url c 'rutacertificado' %}?download=1" rel="noopener">
+                    Descargar
+                  </a>
+                </div>
+              {% endif %}
+            </div>
+          </div>
+        {% empty %}
+          <div class="empty-state">No hay cursos para mostrar.</div>
+        {% endfor %}
+      </section>
+
+      <section class="content-section">
+        <h2 class="content-title">Reconocimientos</h2>
+        
+        {% for r in reconocimientos %}
+          <div class="timeline-item">
+            <div class="timeline-year">
+              {% if r.fechareconocimiento %}
+                {{ r.fechareconocimiento|date:"Y" }}
+              {% else %}
+                —
+              {% endif %}
+            </div>
+            
+            <div class="timeline-content">
+              <h3 class="timeline-title">{{ r.descripcionreconocimiento|default:"Reconocimiento" }}</h3>
+              <div class="timeline-subtitle">
+                {{ r.tiporeconocimiento|default:"" }}
+                {% if r.entidadpatrocinadora %}
+                  • {{ r.entidadpatrocinadora }}
+                {% endif %}
+                {% if r.fechareconocimiento %}
+                  • {{ r.fechareconocimiento|date:"d/m/Y" }}
+                {% endif %}
+              </div>
+              
+              {% if r.rutacertificado %}
+                <div class="certificate-actions">
+                  <a class="btn btn-outline" href="{% azure_file_url r 'rutacertificado' %}" target="_blank" rel="noopener">
+                    Vista previa
+                  </a>
+                  <a class="btn btn-primary" href="{% azure_file_url r 'rutacertificado' %}?download=1" rel="noopener">
+                    Descargar
+                  </a>
+                </div>
+              {% endif %}
+            </div>
+          </div>
+        {% empty %}
+          <div class="empty-state">No hay reconocimientos para mostrar.</div>
+        {% endfor %}
+      </section>
+
+      <section class="content-section">
+        <h2 class="content-title">Productos académicos y laborales</h2>
+        
+        <div class="products-grid">
+          <div class="product-column">
+            <h3 class="product-column-title">Académicos</h3>
+            
+            {% for p in prod_acad %}
+              <div class="product-item">
+                <div class="skill-tag">{{ p.clasificador|default:"Recurso" }}</div>
+                <h4 class="product-name">{{ p.nombrerecurso|default:"—" }}</h4>
+                {% if p.descripcion %}
+                  <p class="product-description">{{ p.descripcion }}</p>
+                {% endif %}
+              </div>
+            {% empty %}
+              <div class="empty-state">Sin productos académicos.</div>
+            {% endfor %}
+          </div>
+          
+          <div class="product-column">
+            <h3 class="product-column-title">Laborales</h3>
+            
+            {% for p in prod_lab %}
+              <div class="product-item">
+                <div class="skill-tag">
+                  {% if p.fechaproducto %}
+                    {{ p.fechaproducto|date:"Y" }}
+                  {% else %}
+                    Producto
+                  {% endif %}
+                </div>
+                <h4 class="product-name">{{ p.nombreproducto|default:"—" }}</h4>
+                {% if p.descripcion %}
+                  <p class="product-description">{{ p.descripcion }}</p>
+                {% endif %}
+              </div>
+            {% empty %}
+              <div class="empty-state">Sin productos laborales.</div>
+            {% endfor %}
+          </div>
+        </div>
+      </section>
+
+      <section class="content-section">
+        <h2 class="content-title">Venta garage</h2>
+        
+        {% for g in garage %}
+          <div class="timeline-item">
+            <div class="timeline-year">{{ g.estadoproducto|default:"—" }}</div>
+            
+            <div class="timeline-content">
+              <h3 class="timeline-title">{{ g.nombreproducto|default:"Producto" }}</h3>
+              <div class="timeline-subtitle">
+                {{ g.descripcion|default:"" }}
+                {% if g.valordelbien %}
+                  • ${{ g.valordelbien }}
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        {% empty %}
+          <div class="empty-state">No hay productos en venta.</div>
+        {% endfor %}
+      </section>
+    </main>
+  </div>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const avatarImg = document.getElementById('avatar-img');
+      if (avatarImg) {
+        avatarImg.addEventListener('error', function() {
+          console.error('Error cargando imagen');
+          this.style.display = 'none';
+          const placeholder = document.createElement('div');
+          placeholder.className = 'avatar-placeholder';
+          placeholder.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            ERROR AL CARGAR
+          `;
+          this.parentNode.appendChild(placeholder);
+        });
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,42 @@
+{% load static %}
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>{% block title %}Hoja de Vida{% endblock %}</title>
+
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+  <div class="bg-glow"></div>
+
+  <header class="topbar">
+    <div class="container topbar__inner">
+      <a class="brand" href="/">HV</a>
+
+      <nav class="nav">
+        <a href="#proyectos">Proyectos</a>
+        <a href="#cursos">Cursos</a>
+        <a href="#contacto">Contacto</a>
+        <a class="btn btn--ghost" href="/admin/" target="_blank" rel="noopener">Admin</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="footer">
+    <div class="container footer__inner">
+      <span>© {{ now|date:"Y" }} - Hoja de Vida</span>
+      <span class="muted">Hecho con Django + Cloudinary</span>
+    </div>
+  </footer>
+</body>
+</html>
