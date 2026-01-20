@@ -8,10 +8,7 @@ pip install -r requirements.txt
 echo "📦 Colectando archivos estáticos..."
 python manage.py collectstatic --noinput
 
-echo "🗄️ Verificando migraciones pendientes..."
-python manage.py showmigrations
-
 echo "🗄️ Aplicando migraciones..."
-python manage.py migrate --noinput
+python manage.py migrate --noinput --verbosity 2
 
 echo "✅ Build completado!"
