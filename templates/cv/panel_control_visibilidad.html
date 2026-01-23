@@ -1,0 +1,447 @@
+<!-- templates/cv/panel_control_visibilidad.html -->
+<!-- Panel de control para mostrar/ocultar secciones -->
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Control - Visibilidad</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .seccion-grupo {
+            margin-bottom: 40px;
+            border: 2px solid #f0f0f0;
+            border-radius: 10px;
+            padding: 25px;
+            background: #fafafa;
+        }
+
+        .seccion-grupo h2 {
+            color: #333;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.4em;
+        }
+
+        .seccion-grupo h2 .emoji {
+            font-size: 1.5em;
+        }
+
+        .opciones-lista {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .opcion {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            border: 2px solid #e0e0e0;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .opcion:hover {
+            border-color: #667eea;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .opcion input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: #667eea;
+        }
+
+        .opcion label {
+            flex: 1;
+            cursor: pointer;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .opcion input[type="checkbox"]:checked + label {
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .estado {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            margin-left: 10px;
+        }
+
+        .estado.activo {
+            background: #4caf50;
+            box-shadow: 0 0 8px rgba(76, 175, 80, 0.6);
+        }
+
+        .estado.inactivo {
+            background: #f44336;
+            box-shadow: 0 0 8px rgba(244, 67, 54, 0.6);
+        }
+
+        .resumen {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .resumen-item {
+            text-align: center;
+        }
+
+        .resumen-item .numero {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .resumen-item .texto {
+            opacity: 0.9;
+            font-size: 0.95em;
+        }
+
+        .porcentaje {
+            font-size: 3em;
+            font-weight: bold;
+            color: #4caf50;
+        }
+
+        .botones {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primario {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primario:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secundario {
+            background: #f5f5f5;
+            color: #333;
+            border: 2px solid #ddd;
+        }
+
+        .btn-secundario:hover {
+            background: #eeeeee;
+            border-color: #999;
+        }
+
+        .btn-peligro {
+            background: #f44336;
+            color: white;
+        }
+
+        .btn-peligro:hover {
+            background: #d32f2f;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(244, 67, 54, 0.3);
+        }
+
+        .mensaje {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .mensaje.exito {
+            background: #c8e6c9;
+            color: #2e7d32;
+            border-left: 4px solid #4caf50;
+        }
+
+        .mensaje.error {
+            background: #ffcdd2;
+            color: #c62828;
+            border-left: 4px solid #f44336;
+        }
+
+        .perfil-info {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            border-left: 4px solid #2196f3;
+        }
+
+        .perfil-info strong {
+            color: #1565c0;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .opciones-lista {
+                grid-template-columns: 1fr;
+            }
+
+            .resumen {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 Panel de Control</h1>
+            <p>Gestiona qué secciones se muestran en tu página de vida</p>
+        </div>
+
+        <div class="content">
+            <!-- Información del perfil -->
+            <div class="perfil-info">
+                <strong>👤 Perfil:</strong> {{ perfil.nombres }} {{ perfil.apellidos }}<br>
+                <strong>📅 Última actualización:</strong> {{ config.fecha_actualizacion|date:"d/m/Y H:i" }}
+            </div>
+
+            <!-- Resumen de secciones activas -->
+            <div class="resumen">
+                <div class="resumen-item">
+                    <div class="numero">{{ resumen.activas }}</div>
+                    <div class="texto">Secciones Activas</div>
+                </div>
+                <div class="resumen-item">
+                    <div class="numero">/</div>
+                    <div class="texto"></div>
+                </div>
+                <div class="resumen-item">
+                    <div class="numero">{{ resumen.total }}</div>
+                    <div class="texto">Total de Secciones</div>
+                </div>
+                <div class="resumen-item">
+                    <div class="porcentaje">{{ resumen.porcentaje }}%</div>
+                    <div class="texto">Cobertura</div>
+                </div>
+            </div>
+
+            <!-- Formulario de visibilidad -->
+            <form method="post" id="form-visibilidad">
+                {% csrf_token %}
+
+                <!-- Secciones Principales -->
+                <div class="seccion-grupo">
+                    <h2>
+                        <span class="emoji">📊</span>
+                        Secciones Principales
+                    </h2>
+                    <div class="opciones-lista">
+                        <div class="opcion">
+                            <input type="checkbox" id="datos_personales" name="mostrar_datos_personales"
+                                {% if config.mostrar_datos_personales %}checked{% endif %}>
+                            <label for="datos_personales">Datos Personales</label>
+                            <span class="estado {% if config.mostrar_datos_personales %}activo{% else %}inactivo{% endif %}"></span>
+                        </div>
+
+                        <div class="opcion">
+                            <input type="checkbox" id="experiencia_laboral" name="mostrar_experiencia_laboral"
+                                {% if config.mostrar_experiencia_laboral %}checked{% endif %}>
+                            <label for="experiencia_laboral">Experiencia Laboral</label>
+                            <span class="estado {% if config.mostrar_experiencia_laboral %}activo{% else %}inactivo{% endif %}"></span>
+                        </div>
+
+                        <div class="opcion">
+                            <input type="checkbox" id="cursos" name="mostrar_cursos"
+                                {% if config.mostrar_cursos %}checked{% endif %}>
+                            <label for="cursos">Cursos Realizados</label>
+                            <span class="estado {% if config.mostrar_cursos %}activo{% else %}inactivo{% endif %}"></span>
+                        </div>
+
+                        <div class="opcion">
+                            <input type="checkbox" id="reconocimientos" name="mostrar_reconocimientos"
+                                {% if config.mostrar_reconocimientos %}checked{% endif %}>
+                            <label for="reconocimientos">Reconocimientos</label>
+                            <span class="estado {% if config.mostrar_reconocimientos %}activo{% else %}inactivo{% endif %}"></span>
+                        </div>
+
+                        <div class="opcion">
+                            <input type="checkbox" id="productos_academicos" name="mostrar_productos_academicos"
+                                {% if config.mostrar_productos_academicos %}checked{% endif %}>
+                            <label for="productos_academicos">Productos Académicos</label>
+                            <span class="estado {% if config.mostrar_productos_academicos %}activo{% else %}inactivo{% endif %}"></span>
+                        </div>
+
+                        <div class="opcion">
+                            <input type="checkbox" id="productos_laborales" name="mostrar_productos_laborales"
+                                {% if config.mostrar_productos_laborales %}checked{% endif %}>
+                            <label for="productos_laborales">Productos Laborales</label>
+                            <span class="estado {% if config.mostrar_productos_laborales %}activo{% else %}inactivo{% endif %}"></span>
+                        </div>
+
+                        <div class="opcion">
+                            <input type="checkbox" id="venta_garage" name="mostrar_venta_garage"
+                                {% if config.mostrar_venta_garage %}checked{% endif %}>
+                            <label for="venta_garage">Venta Garage</label>
+                            <span class="estado {% if config.mostrar_venta_garage %}activo{% else %}inactivo{% endif %}"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Elementos Adicionales -->
+                <div class="seccion-grupo">
+                    <h2>
+                        <span class="emoji">✨</span>
+                        Elementos Adicionales
+                    </h2>
+                    <div class="opciones-lista">
+                        <div class="opcion">
+                            <input type="checkbox" id="foto_perfil" name="mostrar_foto_perfil"
+                                {% if config.mostrar_foto_perfil %}checked{% endif %}>
+                            <label for="foto_perfil">Foto de Perfil</label>
+                            <span class="estado {% if config.mostrar_foto_perfil %}activo{% else %}inactivo{% endif %}"></span>
+                        </div>
+
+                        <div class="opcion">
+                            <input type="checkbox" id="contacto" name="mostrar_contacto"
+                                {% if config.mostrar_contacto %}checked{% endif %}>
+                            <label for="contacto">Información de Contacto</label>
+                            <span class="estado {% if config.mostrar_contacto %}activo{% else %}inactivo{% endif %}"></span>
+                        </div>
+
+                        <div class="opcion">
+                            <input type="checkbox" id="cv_descargable" name="mostrar_cv_descargable"
+                                {% if config.mostrar_cv_descargable %}checked{% endif %}>
+                            <label for="cv_descargable">CV Descargable</label>
+                            <span class="estado {% if config.mostrar_cv_descargable %}activo{% else %}inactivo{% endif %}"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botones -->
+                <div class="botones">
+                    <button type="submit" class="btn btn-primario">💾 Guardar Cambios</button>
+                    <button type="button" class="btn btn-secundario" onclick="seleccionarTodos()">✅ Seleccionar Todo</button>
+                    <button type="button" class="btn btn-peligro" onclick="deseleccionarTodos()">❌ Deseleccionar Todo</button>
+                    <a href="{% url 'admin:index' %}" class="btn btn-secundario">🔙 Ir al Admin</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function seleccionarTodos() {
+            document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+                cb.checked = true;
+            });
+            actualizarEstados();
+        }
+
+        function deseleccionarTodos() {
+            document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+                cb.checked = false;
+            });
+            actualizarEstados();
+        }
+
+        function actualizarEstados() {
+            document.querySelectorAll('.opcion').forEach(opcion => {
+                const checkbox = opcion.querySelector('input[type="checkbox"]');
+                const estado = opcion.querySelector('.estado');
+                
+                if (checkbox.checked) {
+                    estado.classList.remove('inactivo');
+                    estado.classList.add('activo');
+                } else {
+                    estado.classList.remove('activo');
+                    estado.classList.add('inactivo');
+                }
+            });
+        }
+
+        // Actualizar estados al cambiar checkboxes
+        document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+            checkbox.addEventListener('change', actualizarEstados);
+        });
+
+        // Actualizar estados al cargar la página
+        actualizarEstados();
+    </script>
+</body>
+</html>

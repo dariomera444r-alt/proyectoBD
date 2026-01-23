@@ -1,0 +1,37 @@
+/* ==================== ESTILOS PERSONALIZADOS PARA CAMPOS ====================*/
+
+/* Campos de fecha - Texto visible */
+input.vDateField,
+input[type="text"],
+textarea,
+select {
+    color: #ffffff !important;
+    background-color: #3a3a3a !important;
+    border: 1px solid #555555 !important;
+    padding: 10px !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+}
+
+input.vDateField::placeholder,
+input[type="text"]::placeholder,
+textarea::placeholder {
+    color: #999999 !important;
+    opacity: 1 !important;
+}
+
+input.vDateField:focus,
+input[type="text"]:focus,
+textarea:focus,
+select:focus {
+    outline: none !important;
+    color: #ffffff !important;
+    background-color: #4a4a4a !important;
+    border-color: #2563eb !important;
+    box-shadow: 0 0 8px rgba(37, 99, 235, 0.4) !important;
+}
+
+select option {
+    color: #ffffff !important;
+    background-color: #3a3a3a !important;
+}

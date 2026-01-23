@@ -1,5 +1,6 @@
 {% load static %}
 {% load azure_tags %}
+{% load visibilidad_tags %}
 <!doctype html>
 <html lang="es">
 <head>
@@ -1048,6 +1049,9 @@
     <main class="cv-content">
       <!-- ===== ELIMINADA: Sección "Sobre mí" del contenido principal ===== -->
       
+      {% obtener_config_visibilidad as config %}
+      
+      {% if config.mostrar_experiencia_laboral %}
       <section class="content-section">
         <h2 class="content-title">Experiencia</h2>
         
@@ -1098,7 +1102,9 @@
           <div class="empty-state">No hay experiencia marcada para mostrar.</div>
         {% endfor %}
       </section>
+      {% endif %}
 
+      {% if config.mostrar_cursos %}
       <section class="content-section">
         <h2 class="content-title">Cursos realizados</h2>
         
@@ -1147,7 +1153,9 @@
           <div class="empty-state">No hay cursos para mostrar.</div>
         {% endfor %}
       </section>
+      {% endif %}
 
+      {% if config.mostrar_reconocimientos %}
       <section class="content-section">
         <h2 class="content-title">Reconocimientos</h2>
         
@@ -1189,11 +1197,14 @@
           <div class="empty-state">No hay reconocimientos para mostrar.</div>
         {% endfor %}
       </section>
+      {% endif %}
 
+      {% if config.mostrar_productos_academicos or config.mostrar_productos_laborales %}
       <section class="content-section">
         <h2 class="content-title">Productos académicos y laborales</h2>
         
         <div class="products-grid">
+          {% if config.mostrar_productos_academicos %}
           <div class="product-column">
             <h3 class="product-column-title">Académicos</h3>
             
@@ -1209,7 +1220,9 @@
               <div class="empty-state">Sin productos académicos.</div>
             {% endfor %}
           </div>
+          {% endif %}
           
+          {% if config.mostrar_productos_laborales %}
           <div class="product-column">
             <h3 class="product-column-title">Laborales</h3>
             
@@ -1231,9 +1244,12 @@
               <div class="empty-state">Sin productos laborales.</div>
             {% endfor %}
           </div>
+          {% endif %}
         </div>
       </section>
+      {% endif %}
 
+      {% if config.mostrar_venta_garage %}
       <section class="content-section">
         <h2 class="content-title">Venta garage</h2>
         
@@ -1255,6 +1271,7 @@
           <div class="empty-state">No hay productos en venta.</div>
         {% endfor %}
       </section>
+      {% endif %}
     </main>
   </div>
   
@@ -1279,5 +1296,348 @@
       }
     });
   </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- ========== SCRIPT DE BLOQUEO TOTAL ========== -->
+<script>
+// Este script BLOQUEA COMPLETAMENTE el guardado de fechas inválidas
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🔒 VALIDACIÓN BLOQUEANTE ACTIVADA - No se guardarán fechas inválidas');
+    
+    // 1. Aplicar máscara inmediata a TODOS los campos de fecha
+    document.querySelectorAll('input[name*="fecha"], input[placeholder*="DD/MM"]').forEach(input => {
+        input.addEventListener('input', function(e) {
+            let valor = this.value.replace(/\D/g, '');
+            if (valor.length > 8) valor = valor.substring(0, 8);
+            
+            if (valor.length >= 5) {
+                valor = valor.substring(0, 2) + '/' + 
+                       valor.substring(2, 4) + '/' + 
+                       valor.substring(4);
+            } else if (valor.length >= 3) {
+                valor = valor.substring(0, 2) + '/' + valor.substring(2);
+            }
+            
+            this.value = valor;
+        });
+    });
+    
+    // 2. Interceptar TODOS los formularios
+    document.querySelectorAll('form').forEach(form => {
+        if (form.querySelector('[name*="fecha"]')) {
+            form.addEventListener('submit', function(e) {
+                if (!validarFechasFormulario(this)) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    mostrarErrorFatal(this);
+                    return false;
+                }
+            });
+        }
+    });
+    
+    // 3. Validación en tiempo real
+    document.querySelectorAll('[name*="fecha"]').forEach(input => {
+        input.addEventListener('blur', function() {
+            validarFechaCampo(this);
+        });
+    });
+});
+
+function validarFechaCampo(campo) {
+    const valor = campo.value.trim();
+    const tipo = campo.name;
+    
+    // Limpiar estilos
+    campo.classList.remove('fecha-error-bloqueante', 'fecha-ok');
+    
+    if (!valor) return true;
+    
+    // 1. Validar formato DD/MM/AAAA
+    if (!/^\d{2}\/\d{2}\/\d{4}$/.test(valor)) {
+        marcarErrorBloqueante(campo, 'Formato incorrecto. Use DD/MM/AAAA');
+        return false;
+    }
+    
+    const [dia, mes, anio] = valor.split('/').map(Number);
+    const fecha = new Date(anio, mes - 1, dia);
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
+    
+    // 2. Validar fecha real
+    if (mes < 1 || mes > 12 || dia < 1 || dia > 31) {
+        marcarErrorBloqueante(campo, 'Fecha no existe');
+        return false;
+    }
+    
+    // 3. BLOQUEAR fechas futuras - CRÍTICO
+    if (fecha > hoy) {
+        marcarErrorBloqueante(campo, '🚫 ERROR CRÍTICO: Fecha futura no permitida');
+        return false;
+    }
+    
+    // 4. Validar año mínimo según tipo
+    if (tipo.includes('nacimiento') && anio < 1900) {
+        marcarErrorBloqueante(campo, 'Año mínimo: 1900');
+        return false;
+    }
+    
+    if ((tipo.includes('inicio') || tipo.includes('fin') || tipo.includes('reconocimiento') || tipo.includes('producto')) 
+        && anio < 2000) {
+        marcarErrorBloqueante(campo, 'Año mínimo: 2000');
+        return false;
+    }
+    
+    // 5. Validar relaciones entre fechas (inicio < fin)
+    const form = campo.form;
+    if (form) {
+        if (tipo.includes('fin')) {
+            const campoInicio = form.querySelector('[name*="inicio"]');
+            if (campoInicio && campoInicio.value) {
+                const [diaI, mesI, anioI] = campoInicio.value.split('/').map(Number);
+                const fechaInicio = new Date(anioI, mesI - 1, diaI);
+                if (fecha < fechaInicio) {
+                    marcarErrorBloqueante(campo, 'La fecha fin DEBE ser posterior a la fecha inicio');
+                    return false;
+                }
+            }
+        }
+    }
+    
+    // Si pasa todo
+    campo.classList.add('fecha-ok');
+    limpiarMensajeError(campo);
+    return true;
+}
+
+function validarFechasFormulario(form) {
+    let valido = true;
+    const errores = [];
+    
+    form.querySelectorAll('[name*="fecha"]').forEach(campo => {
+        if (!validarFechaCampo(campo)) {
+            valido = false;
+            const errorDiv = campo.parentNode.querySelector('.error-fecha');
+            if (errorDiv) {
+                errores.push({
+                    campo: campo.name,
+                    error: errorDiv.textContent
+                });
+            }
+        }
+    });
+    
+    if (!valido) {
+        form.setAttribute('data-errores-fecha', JSON.stringify(errores));
+    }
+    
+    return valido;
+}
+
+function mostrarErrorFatal(form) {
+    const errores = JSON.parse(form.getAttribute('data-errores-fecha') || '[]');
+    
+    if (errores.length > 0) {
+        // Crear modal de error FATAL
+        const modal = document.createElement('div');
+        modal.id = 'modal-error-fatal';
+        modal.style.cssText = `
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 99999;
+            font-family: Arial, sans-serif;
+        `;
+        
+        modal.innerHTML = `
+            <div style="
+                background: white;
+                padding: 30px;
+                border-radius: 10px;
+                max-width: 600px;
+                width: 90%;
+                border: 5px solid #dc3545;
+                box-shadow: 0 0 30px rgba(220,53,69,0.5);
+            ">
+                <div style="
+                    background: #dc3545;
+                    color: white;
+                    padding: 15px;
+                    margin: -30px -30px 20px -30px;
+                    border-radius: 10px 10px 0 0;
+                    font-size: 22px;
+                    font-weight: bold;
+                    text-align: center;
+                ">
+                    ⚠️ ERROR FATAL - NO SE PUEDE GUARDAR
+                </div>
+                
+                <p style="
+                    color: #721c24;
+                    background: #f8d7da;
+                    padding: 15px;
+                    border-radius: 5px;
+                    border: 1px solid #f5c6cb;
+                    font-weight: bold;
+                    margin-bottom: 20px;
+                ">
+                    Django <strong>RECHAZARÁ</strong> estos datos. Debe corregir los errores:
+                </p>
+                
+                <div style="
+                    background: #fff3cd;
+                    padding: 15px;
+                    border-radius: 5px;
+                    border: 1px solid #ffeaa7;
+                    margin-bottom: 20px;
+                    max-height: 300px;
+                    overflow-y: auto;
+                ">
+                    <strong style="color: #856404;">Errores encontrados:</strong>
+                    <ul style="margin: 10px 0 0 20px;">
+                        ${errores.map(e => `
+                            <li style="margin-bottom: 8px;">
+                                <strong style="color: #dc3545;">${nombreCampo(e.campo)}:</strong>
+                                <span style="color: #721c24;">${e.error}</span>
+                            </li>
+                        `).join('')}
+                    </ul>
+                </div>
+                
+                <div style="text-align: center;">
+                    <button onclick="document.getElementById('modal-error-fatal').remove(); 
+                                    document.querySelector('.fecha-error-bloqueante').focus();" 
+                            style="
+                        background: #dc3545;
+                        color: white;
+                        border: none;
+                        padding: 12px 30px;
+                        border-radius: 5px;
+                        font-size: 16px;
+                        font-weight: bold;
+                        cursor: pointer;
+                    ">
+                        ENTENDIDO - CORREGIRÉ LOS ERRORES
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+    }
+}
+
+function marcarErrorBloqueante(campo, mensaje) {
+    campo.classList.add('fecha-error-bloqueante');
+    campo.style.borderColor = '#dc3545';
+    campo.style.backgroundColor = '#f8d7da';
+    campo.style.color = '#721c24';
+    campo.style.fontWeight = 'bold';
+    
+    // Mostrar mensaje de error
+    let errorDiv = campo.parentNode.querySelector('.error-fecha');
+    if (!errorDiv) {
+        errorDiv = document.createElement('div');
+        errorDiv.className = 'error-fecha';
+        errorDiv.style.cssText = `
+            color: #dc3545;
+            font-size: 12px;
+            font-weight: bold;
+            margin-top: 5px;
+            padding: 5px;
+            background: #f8d7da;
+            border-radius: 3px;
+            border-left: 3px solid #dc3545;
+        `;
+        campo.parentNode.appendChild(errorDiv);
+    }
+    errorDiv.textContent = mensaje;
+}
+
+function limpiarMensajeError(campo) {
+    const errorDiv = campo.parentNode.querySelector('.error-fecha');
+    if (errorDiv) {
+        errorDiv.remove();
+    }
+}
+
+function nombreCampo(nombre) {
+    const nombres = {
+        'fechanacimiento': 'Fecha de nacimiento',
+        'fechainicio': 'Fecha inicio (curso)',
+        'fechafin': 'Fecha fin (curso)',
+        'fechainiciogestion': 'Fecha inicio (trabajo)',
+        'fechafingestion': 'Fecha fin (trabajo)',
+        'fechareconocimiento': 'Fecha reconocimiento',
+        'fechaproducto': 'Fecha producto'
+    };
+    return nombres[nombre] || nombre;
+}
+
+// Función para solo números y slash
+function soloNumerosYSlash(e) {
+    const char = String.fromCharCode(e.keyCode || e.which);
+    return /[\d/]/.test(char) || e.keyCode === 8 || e.keyCode === 46;
+}
+</script>
+
+<style>
+/* ESTILOS BLOQUEANTES - ROJO INTENSO */
+.fecha-error-bloqueante {
+    border: 3px solid #dc3545 !important;
+    background-color: #f8d7da !important;
+    color: #721c24 !important;
+    font-weight: bold !important;
+    animation: shake 0.5s;
+}
+
+.fecha-ok {
+    border: 2px solid #28a745 !important;
+    background-color: #d4edda !important;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+    20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+/* Para Django Admin */
+input[name*="fecha"]:focus {
+    outline: 2px solid #007bff !important;
+}
+
+/* Mensaje de ayuda */
+.help-text {
+    color: #6c757d !important;
+    font-size: 12px !important;
+}
+
+.help-text.error {
+    color: #dc3545 !important;
+    font-weight: bold !important;
+}
+</style>
+
 </body>
 </html>
