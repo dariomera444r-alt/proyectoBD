@@ -17,3 +17,9 @@ services:
         sync: false
       - key: AZURE_CONTAINER
         value: "media"
+      - key: DJANGO_SUPERUSER_USERNAME
+        value: "admin"
+      - key: DJANGO_SUPERUSER_EMAIL
+        value: "tu-email@example.com"
+      - key: DJANGO_SUPERUSER_PASSWORD
+        sync: false
