@@ -201,7 +201,7 @@ class CursosRealizadosAdmin(admin.ModelAdmin):
             'description': mark_safe(
                 '<div style="background-color: #f0f7ff; border: 2px solid #2196F3; padding: 10px; border-radius: 5px; color: #000;">'
                 '<strong>ℹ️ INFORMACIÓN:</strong><br>'
-                'Las horas totales NO pueden ser negativas. Solo se aceptan valores ≥ 0.'
+                'Las horas totales deben ser >= 1 hora. Se aceptan valores desde 1 en adelante.'
                 '</div>'
             )
         }),

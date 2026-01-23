@@ -20,9 +20,9 @@ def validar_fecha_inicio_anterior_fin(fecha_inicio, fecha_fin):
     return True
 
 def validar_horas_no_negativas(value):
-    """🚫 BLOQUEANTE: Valida que las horas NO sean negativas"""
-    if value is not None and value < 0:
-        raise ValidationError('🚫 ERROR: Las horas no pueden ser negativas.')
+    """🚫 BLOQUEANTE: Valida que las horas sean >= 1"""
+    if value is not None and value < 1:
+        raise ValidationError('🚫 ERROR: Las horas deben ser >= 1 hora.')
     return value
 
 # ==================== MODELO: DatosPersonales ====================
@@ -247,9 +247,9 @@ class CursosRealizados(models.Model):
         errores = {}
         hoy = timezone.now().date()
         
-        # Validar horas no negativas
-        if self.totalhoras is not None and self.totalhoras < 0:
-            errores['totalhoras'] = '🚫 ERROR: Las horas no pueden ser negativas.'
+        # Validar horas >= 1
+        if self.totalhoras is not None and self.totalhoras < 1:
+            errores['totalhoras'] = '🚫 ERROR: Las horas deben ser >= 1 hora.'
         
         # Validar fechas no futuras
         if self.fechainicio:
