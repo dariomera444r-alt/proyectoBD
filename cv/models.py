@@ -19,6 +19,12 @@ def validar_fecha_inicio_anterior_fin(fecha_inicio, fecha_fin):
         )
     return True
 
+def validar_horas_no_negativas(value):
+    """🚫 BLOQUEANTE: Valida que las horas NO sean negativas"""
+    if value is not None and value < 0:
+        raise ValidationError('🚫 ERROR: Las horas no pueden ser negativas.')
+    return value
+
 # ==================== MODELO: DatosPersonales ====================
 class DatosPersonales(models.Model):
     idperfil = models.AutoField(primary_key=True)
@@ -227,7 +233,7 @@ class CursosRealizados(models.Model):
         validators=[validar_no_fecha_futura]
     )
 
-    totalhoras = models.IntegerField(blank=True, null=True)
+    totalhoras = models.IntegerField(blank=True, null=True, validators=[validar_horas_no_negativas])
 
     entidadpatrocinadora = models.CharField(max_length=100, blank=True, null=True)
 
@@ -240,6 +246,10 @@ class CursosRealizados(models.Model):
         super().clean()
         errores = {}
         hoy = timezone.now().date()
+        
+        # Validar horas no negativas
+        if self.totalhoras is not None and self.totalhoras < 0:
+            errores['totalhoras'] = '🚫 ERROR: Las horas no pueden ser negativas.'
         
         # Validar fechas no futuras
         if self.fechainicio:

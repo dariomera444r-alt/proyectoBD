@@ -197,7 +197,13 @@ class CursosRealizadosAdmin(admin.ModelAdmin):
     
     fieldsets = (
         ('Información del Curso', {
-            'fields': ('nombrecurso', 'descripcioncurso', 'entidadpatrocinadora', 'totalhoras')
+            'fields': ('nombrecurso', 'descripcioncurso', 'entidadpatrocinadora', 'totalhoras'),
+            'description': mark_safe(
+                '<div style="background-color: #f0f7ff; border: 2px solid #2196F3; padding: 10px; border-radius: 5px; color: #000;">'
+                '<strong>ℹ️ INFORMACIÓN:</strong><br>'
+                'Las horas totales NO pueden ser negativas. Solo se aceptan valores ≥ 0.'
+                '</div>'
+            )
         }),
         ('Fechas - 🚫 VALIDACIÓN BLOQUEANTE ESTRICTA', {
             'fields': ('fechainicio', 'fechafin'),

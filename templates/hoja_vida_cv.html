@@ -903,15 +903,18 @@
       </a>
     {% endif %}
 
-    {% if perfil and perfil.cv_pdf %}
-      <a class="btn btn-outline" href="{% azure_file_url perfil 'cv_pdf' %}?download=1" target="_blank" rel="noopener">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-          <polyline points="7 10 12 15 17 10"></polyline>
-          <line x1="12" y1="15" x2="12" y2="3"></line>
-        </svg>
-        Descargar CV
-      </a>
+    {% obtener_config_visibilidad as config %}
+    {% if config.mostrar_cv_descargable %}
+      {% if perfil and perfil.cv_pdf %}
+        <a class="btn btn-outline" href="{% azure_file_url perfil 'cv_pdf' %}?download=1" target="_blank" rel="noopener">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+          Descargar CV
+        </a>
+      {% endif %}
     {% endif %}
   </div>
 
@@ -919,7 +922,9 @@
     
     <aside class="cv-sidebar">
       {% load azure_tags %}
+      {% obtener_config_visibilidad as config %}
 
+      {% if config.mostrar_foto_perfil %}
       <div class="avatar-container">
         <div class="avatar">
           {% if perfil.foto %}
@@ -963,7 +968,9 @@
           {% endif %}
         </div>
       </div>
+      {% endif %}
 
+      {% if config.mostrar_contacto %}
       <div class="personal-info">
         <h3 class="section-title">Contacto</h3>
         
@@ -1004,6 +1011,7 @@
         </div>
         {% endif %}
       </div>
+      {% endif %}
 
       <div class="personal-info">
         <h3 class="section-title">Datos personales</h3>
