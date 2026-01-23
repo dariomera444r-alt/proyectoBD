@@ -10,10 +10,16 @@ services:
       - key: DEBUG
         value: "False"
       - key: ALLOWED_HOSTS
-        value: "your-render-app.onrender.com,localhost,127.0.0.1"
+        value: "proyectobd-lfw1.onrender.com,localhost,127.0.0.1"
       - key: AZURE_ACCOUNT_NAME
         sync: false
       - key: AZURE_ACCOUNT_KEY
         sync: false
       - key: AZURE_CONTAINER
         value: "media"
+      - key: DJANGO_SUPERUSER_USERNAME
+        value: "admin"
+      - key: DJANGO_SUPERUSER_EMAIL
+        value: "tu-email@example.com"
+      - key: DJANGO_SUPERUSER_PASSWORD
+        sync: false
