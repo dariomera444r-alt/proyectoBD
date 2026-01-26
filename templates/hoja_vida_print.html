@@ -1,0 +1,1334 @@
+{% load static %}
+{% load azure_tags %}
+{% load visibilidad_tags %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vista Previa de Impresión - Hoja de Vida</title>
+    
+    <style>
+        @page {
+            size: A4;
+            margin: 1.5cm 2cm 2cm 2cm;
+        }
+
+        * {
+            -webkit-print-color-adjust: exact !important;
+            color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Times New Roman', serif;
+            background: #ffffff !important;
+            color: #1a202c !important;
+            font-size: 11pt;
+            line-height: 1.4;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .print-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #1e40af;
+        }
+
+        .print-header h1 {
+            color: #1e40af !important;
+            font-size: 18pt;
+            font-weight: 700;
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .print-header .subtitle {
+            color: #374151 !important;
+            font-size: 12pt;
+            font-style: italic;
+            margin-top: 5px;
+        }
+
+        .print-cv-container {
+            max-width: 100%;
+            margin: 0 auto;
+            background: #ffffff !important;
+            display: grid;
+            grid-template-columns: 32% 68%;
+            gap: 20px;
+        }
+
+        /* COLUMNA IZQUIERDA */
+        .print-sidebar {
+            background: #f8fafc !important;
+            color: #1a202c !important;
+            padding: 0;
+            border-right: 2px solid #1e40af;
+            font-size: 10pt;
+            page-break-inside: avoid;
+        }
+
+        .print-avatar-container {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 15px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .print-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 3px solid #1e40af;
+            margin: 0 auto 15px;
+            background: #e2e8f0;
+            overflow: hidden;
+        }
+
+        .print-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .print-name {
+            font-size: 14pt;
+            font-weight: 700;
+            color: #1e40af !important;
+            text-align: center;
+            line-height: 1.2;
+            margin: 0 0 10px 0;
+        }
+
+        .print-section-title {
+            font-size: 11pt;
+            font-weight: 700;
+            color: #1e40af !important;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 20px 0 12px 0;
+            padding: 8px 0;
+            border-bottom: 2px solid #1e40af;
+            text-align: center;
+        }
+
+        .print-info-item {
+            margin-bottom: 8px;
+            padding: 4px 0;
+        }
+
+        .print-info-label {
+            font-size: 9pt;
+            font-weight: 700;
+            color: #374151 !important;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 3px;
+            background: linear-gradient(135deg, #e0f2fe, #f0f9ff);
+            padding: 2px 6px;
+            border-radius: 4px;
+            border-left: 3px solid #1e40af;
+        }
+
+        .print-info-value {
+            font-size: 10pt;
+            color: #1a202c !important;
+            font-weight: 600;
+            line-height: 1.4;
+            padding: 4px 8px;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        /* COLUMNA DERECHA */
+        .print-content {
+            background: #ffffff !important;
+            padding: 0;
+            color: #1a202c !important;
+            font-size: 10pt;
+        }
+
+        .print-content-section {
+            margin-bottom: 20px;
+            padding: 0 0 15px 0;
+            border-bottom: 1px solid #e2e8f0;
+            page-break-inside: avoid;
+            page-break-before: auto;
+            page-break-after: auto;
+        }
+
+        .print-content-section:last-child {
+            border-bottom: none;
+        }
+
+        /* Eliminar saltos de página automáticos */
+        .print-content-section.page-break {
+            page-break-before: auto !important;
+        }
+
+        .print-products-grid {
+            page-break-before: auto !important;
+            page-break-after: auto !important;
+        }
+
+        .print-content-title {
+            font-size: 12pt;
+            font-weight: 700;
+            color: #1e40af !important;
+            margin: 0 0 15px 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 2px solid #1e40af;
+            padding-bottom: 5px;
+            position: relative;
+            padding-left: 15px;
+        }
+
+        .print-content-title::before {
+            content: '';
+            width: 6px;
+            height: 14pt;
+            background: #1e40af;
+            display: inline-block;
+            margin-right: 8px;
+            border-radius: 2px;
+            position: absolute;
+            left: 0;
+            top: 2px;
+        }
+
+        .print-timeline-item {
+            page-break-inside: avoid !important;
+        }
+
+        /* Estilo cuando el panel está oculto */
+        .panel-minimized {
+            animation: none !important;
+            transform: scale(0.9) !important;
+            opacity: 0.8 !important;
+        }
+
+        /* Mejoras de visibilidad del panel */
+        .controls-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid rgba(59, 130, 246, 0.2);
+        }
+
+        .controls-title {
+            background: linear-gradient(135deg, #38bdf8, #3b82f6, #1d4ed8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 14pt;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            position: relative;
+            padding-bottom: 8px;
+        }
+
+        .controls-title::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #38bdf8, #3b82f6, #1d4ed8, transparent);
+            animation: controlsUnderline 3s linear infinite;
+        }
+
+        @keyframes controlsUnderline {
+            0% { background-position: -100% 0; }
+            100% { background-position: 100% 0; }
+        }
+
+        .hide-panel-btn {
+            background: linear-gradient(135deg, #ef4444, #dc2626, #b91c1c);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 9pt;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hide-panel-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .hide-panel-btn:hover::before {
+            left: 100%;
+        }
+
+        .hide-panel-btn:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.6);
+            background: linear-gradient(135deg, #f87171, #ef4444, #dc2626);
+        }
+
+        /* Botón de mostrar mejorado */
+        .toggle-btn {
+            background: linear-gradient(135deg, #10b981, #059669, #047857);
+            color: white;
+            border: 2px solid transparent;
+            background-image: linear-gradient(#10b981, #10b981), 
+                              linear-gradient(135deg, #10b981, #059669, #047857);
+            background-origin: border-box;
+            background-clip: padding-box, border-box;
+            padding: 14px 24px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 12pt;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            animation: toggleBtnEntrance 0.6s ease-out;
+        }
+
+        @keyframes toggleBtnEntrance {
+            0% {
+                transform: scale(0) rotate(-180deg);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.1) rotate(-90deg);
+                opacity: 0.8;
+            }
+            100% {
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
+            }
+        }
+
+        .toggle-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .toggle-btn:hover::before {
+            left: 100%;
+        }
+
+        .toggle-btn:hover {
+            transform: translateY(-4px) scale(1.08) rotateZ(2deg);
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.6);
+            background-image: linear-gradient(#059669, #059669), 
+                              linear-gradient(135deg, #34d399, #10b981, #059669);
+        }
+
+        /* Minimized panel mejorado */
+        .minimized-panel {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            animation: minimizedEntrance 0.5s ease-out;
+        }
+
+        @keyframes minimizedEntrance {
+            0% {
+                transform: translateX(100px) scale(0.8);
+                opacity: 0;
+            }
+            100% {
+                transform: translateX(0) scale(1);
+                opacity: 1;
+            }
+        }
+
+        .minimized-panel .toggle-btn {
+            background: linear-gradient(135deg, #f59e0b, #d97706, #b45309);
+            background-image: linear-gradient(#f59e0b, #f59e0b), 
+                              linear-gradient(135deg, #f59e0b, #d97706, #b45309);
+            box-shadow: 0 6px 20px rgba(245, 158, 11, 0.5);
+        }
+
+        .minimized-panel .toggle-btn:hover {
+            background-image: linear-gradient(#d97706, #d97706), 
+                              linear-gradient(135deg, #fbbf24, #f59e0b, #d97706);
+            box-shadow: 0 10px 30px rgba(245, 158, 11, 0.7);
+        }
+
+        .print-timeline-year {
+            font-size: 10pt;
+            font-weight: 700;
+            color: #1e40af !important;
+            margin-bottom: 4px;
+            background: #ebf8ff;
+            padding: 2px 8px;
+            border-radius: 3px;
+            display: inline-block;
+        }
+
+        .print-timeline-title {
+            font-size: 12pt;
+            font-weight: 800;
+            color: #1e40af !important;
+            margin: 0 0 6px 0;
+            line-height: 1.3;
+            padding: 4px 8px;
+            background: linear-gradient(135deg, #e0f2fe, #f0f9ff);
+            border-left: 4px solid #1e40af;
+            border-radius: 4px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .print-timeline-subtitle {
+            font-size: 10pt;
+            color: #1f2937 !important;
+            margin-bottom: 8px;
+            line-height: 1.5;
+            font-weight: 600;
+            padding: 3px 6px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 3px;
+        }
+
+        .print-timeline-description {
+            font-size: 10pt;
+            color: #374151 !important;
+            line-height: 1.6;
+            margin: 8px 0;
+            padding: 8px 12px;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-left: 3px solid #1e40af;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .print-timeline-subtitle {
+            font-size: 9pt;
+            color: #374151 !important;
+            margin-bottom: 6px;
+            line-height: 1.4;
+            font-weight: 500;
+        }
+
+        .print-timeline-description {
+            font-size: 9pt;
+            color: #4a5568 !important;
+            line-height: 1.4;
+            margin: 0;
+        }
+
+        .print-products-grid {
+            display: grid !important;
+            grid-template-columns: 1fr 1fr !important;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .print-product-column {
+            background: #f8fafc !important;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            padding: 10px;
+        }
+
+        .print-product-column-title {
+            font-size: 10pt;
+            font-weight: 700;
+            color: #1e40af !important;
+            margin: 0 0 8px 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid #1e40af;
+            padding-bottom: 3px;
+        }
+
+        .print-product-item {
+            margin-bottom: 8px;
+            padding: 4px 0;
+        }
+
+        .print-product-name {
+            font-size: 9pt;
+            font-weight: 600;
+            color: #1a202c !important;
+            margin: 0 0 2px 0;
+        }
+
+        .print-product-description {
+            font-size: 8pt;
+            color: #4a5568 !important;
+            line-height: 1.3;
+            margin: 0;
+        }
+
+        .print-skill-tag {
+            font-size: 8pt;
+            font-weight: 600;
+            background: #ebf8ff !important;
+            color: #1e40af !important;
+            padding: 2px 6px;
+            border-radius: 3px;
+            display: inline-block;
+            margin: 1px 2px 1px 0;
+            border: 1px solid #1e40af;
+        }
+
+        .print-empty-state {
+            font-size: 11pt;
+            font-style: italic;
+            text-align: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #fef2f2, #f1f5f9);
+            border: 2px dashed #e2e8f0;
+            border-radius: 12px;
+            color: #64748b !important;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        .print-empty-state::before {
+            content: '📄';
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 20pt;
+            opacity: 0.5;
+        }
+
+        .print-empty-state::after {
+            content: 'Sin datos registrados';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 9pt;
+            color: #94a3b8;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .print-controls {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: linear-gradient(135deg, #f8fafc, #e0f2fe, #f0f9ff);
+            border: 3px solid transparent;
+            background-image: linear-gradient(white, white), 
+                              linear-gradient(135deg, #38bdf8, #3b82f6, #1d4ed8);
+            background-origin: border-box;
+            background-clip: padding-box, border-box;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 8px 32px rgba(59, 130, 246, 0.3), 
+                        0 4px 16px rgba(59, 130, 246, 0.2),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            z-index: 1000;
+            user-select: none;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: panelFloat 4s ease-in-out infinite alternate;
+            backdrop-filter: blur(20px);
+            min-width: 320px;
+            transform-origin: top right;
+        }
+
+        /* Efecto de cristal mejorado */
+        .print-controls::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(135deg, rgba(56, 189, 248, 0.3), rgba(59, 130, 246, 0.2));
+            border-radius: 18px;
+            z-index: -1;
+            animation: crystalGlow 4s ease-in-out infinite alternate;
+        }
+
+        @keyframes crystalGlow {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+
+        .print-controls h3 {
+            cursor: grab;
+            user-select: none;
+            margin-bottom: 15px;
+        }
+
+        .print-controls h3:active {
+            cursor: grabbing;
+        }
+
+        .print-controls:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 12px 40px rgba(59, 130, 246, 0.4), 
+                        0 6px 20px rgba(59, 130, 246, 0.3),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.5);
+        }
+
+        @keyframes panelFloat {
+            0% {
+                transform: translateY(0px) rotateZ(0deg);
+            }
+            25% {
+                transform: translateY(-3px) rotateZ(0.5deg);
+            }
+            75% {
+                transform: translateY(-1px) rotateZ(-0.5deg);
+            }
+            100% {
+                transform: translateY(0px) rotateZ(0deg);
+            }
+        }
+
+        .print-controls h3 {
+            background: linear-gradient(135deg, #38bdf8, #3b82f6, #1d4ed8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 0 0 15px 0;
+            font-size: 14pt;
+            font-weight: 800;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            position: relative;
+            padding-bottom: 10px;
+            cursor: grab;
+            user-select: none;
+        }
+
+        .print-controls h3:active {
+            cursor: grabbing;
+        }
+
+        .print-controls h3::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #38bdf8, #3b82f6, transparent);
+            animation: underlineGlow 3s linear infinite;
+        }
+
+        .print-controls h3::after {
+            content: '↔';
+            position: absolute;
+            top: -15px;
+            right: 0;
+            font-size: 10pt;
+            color: #3b82f6;
+            animation: dragIcon 2s ease-in-out infinite;
+            user-select: none;
+        }
+
+        @keyframes underlineGlow {
+            0% { opacity: 0.7; }
+            50% { opacity: 1; }
+            100% { opacity: 0.7; }
+        }
+
+        @keyframes dragIcon {
+            0%, 100% { 
+                opacity: 0.5; 
+                transform: translateX(0px);
+            }
+            50% { 
+                opacity: 1; 
+                transform: translateX(3px);
+            }
+        }
+
+        .print-button {
+            background: linear-gradient(135deg, #38bdf8, #3b82f6, #1d4ed8);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            margin: 8px 5px;
+            font-size: 11pt;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+        }
+
+        .print-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .print-button:hover::before {
+            left: 100%;
+        }
+
+        .print-button:hover {
+            transform: translateY(-3px) scale(1.05) rotateZ(1deg);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.6);
+            background: linear-gradient(135deg, #06b6d4, #0891b2, #0e7490);
+        }
+
+        .print-button:active {
+            transform: translateY(-1px) scale(0.98);
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            margin: 8px 0;
+            font-size: 10pt;
+            font-weight: 500;
+            padding: 8px 12px;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .checkbox-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, #38bdf8, #3b82f6);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            border-radius: 10px;
+        }
+
+        .checkbox-item:hover {
+            transform: translateX(8px);
+            background: rgba(255, 255, 255, 0.9);
+            border-color: #38bdf8;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+        }
+
+        .checkbox-item:hover::before {
+            opacity: 0.1;
+        }
+
+        .checkbox-item input {
+            margin-right: 12px;
+            width: 18px;
+            height: 18px;
+            accent-color: #3b82f6;
+            cursor: pointer;
+            position: relative;
+            z-index: 2;
+        }
+
+        .checkbox-item label {
+            cursor: pointer;
+            position: relative;
+            z-index: 2;
+            color: #1e40af;
+            font-weight: 600;
+        }
+
+        .checkbox-item input:checked + label {
+            color: #1d4ed8;
+            font-weight: 700;
+        }
+
+        /* Ocultar controles al imprimir */
+        @media print {
+            .print-controls {
+                display: none !important;
+            }
+            
+            .print-cv-container {
+                box-shadow: none;
+                border: none;
+            }
+        }
+
+        /* Saltos de página */
+        .page-break {
+            page-break-before: always;
+        }
+
+        /* Evitar cortes */
+        .avoid-break {
+            page-break-inside: avoid;
+        }
+
+        /* Layout continuo sin saltos */
+        .continuous-layout {
+            page-break-before: auto !important;
+            page-break-after: auto !important;
+            page-break-inside: auto !important;
+        }
+
+        /* Contenedor de panel oculto */
+        .minimized-panel {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            z-index: 1000;
+        }
+
+        .toggle-btn {
+            background: linear-gradient(135deg, #38bdf8, #3b82f6, #1d4ed8);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 11pt;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: toggleBtnPulse 3s ease-in-out infinite alternate;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .toggle-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .toggle-btn:hover::before {
+            left: 100%;
+        }
+
+        .toggle-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.6);
+        }
+
+        @keyframes toggleBtnPulse {
+            0% {
+                box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+            }
+            50% {
+                box-shadow: 0 6px 20px rgba(59, 130, 246, 0.6);
+            }
+            100% {
+                box-shadow: 0 5px 18px rgba(59, 130, 246, 0.5);
+            }
+        }
+
+        /* Ocultar espacios vacíos */
+        .empty-section {
+            display: none;
+        }
+
+        /* Ajuste de layout cuando se ocultan secciones */
+        .no-sidebar {
+            grid-template-columns: 1fr !important;
+        }
+
+        .no-sidebar .print-sidebar {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="print-controls" id="printControls">
+        <div class="controls-header">
+            <h3 class="controls-title">Opciones de Impresión</h3>
+            <button class="hide-panel-btn" onclick="togglePanel()">
+                ✕
+            </button>
+        </div>
+        
+        <div class="checkbox-item">
+            <input type="checkbox" id="toggle-datos-personales" checked onchange="toggleSection('datos-personales')">
+            <label for="toggle-datos-personales">Datos Personales</label>
+        </div>
+        
+        <div class="checkbox-item">
+            <input type="checkbox" id="toggle-experiencia" checked onchange="toggleSection('experiencia')">
+            <label for="toggle-experiencia">Experiencia Laboral</label>
+        </div>
+        
+        <div class="checkbox-item">
+            <input type="checkbox" id="toggle-cursos" checked onchange="toggleSection('cursos')">
+            <label for="toggle-cursos">Cursos Realizados</label>
+        </div>
+        
+        <div class="checkbox-item">
+            <input type="checkbox" id="toggle-reconocimientos" checked onchange="toggleSection('reconocimientos')">
+            <label for="toggle-reconocimientos">Reconocimientos</label>
+        </div>
+        
+        <div class="checkbox-item">
+            <input type="checkbox" id="toggle-productos-academicos" checked onchange="toggleSection('productos-academicos')">
+            <label for="toggle-productos-academicos">Productos Académicos</label>
+        </div>
+        
+        <div class="checkbox-item">
+            <input type="checkbox" id="toggle-productos-laborales" checked onchange="toggleSection('productos-laborales')">
+            <label for="toggle-productos-laborales">Productos Laborales</label>
+        </div>
+        
+        <div class="checkbox-item">
+            <input type="checkbox" id="toggle-venta-garage" checked onchange="toggleSection('venta-garage')">
+            <label for="toggle-venta-garage">Venta Garage</label>
+        </div>
+        
+        <button class="print-button" onclick="window.print()">🖨️ Imprimir Documento</button>
+        <button class="print-button" onclick="window.close()">🚪 Cerrar</button>
+    </div>
+
+    <div class="print-header">
+        <h1>HOJA DE VIDA</h1>
+        <div class="subtitle">Curriculum Vitae</div>
+    </div>
+
+    <div class="print-cv-container">
+        <!-- COLUMNA IZQUIERDA -->
+        {% if perfil %}
+        <div class="print-sidebar" id="datos-personales">
+            {% obtener_config_visibilidad as config %}
+            
+            {% if config and config.mostrar_foto_perfil and sections_config.datos_personales %}
+            <div class="print-avatar-container avoid-break">
+                <div class="print-avatar">
+                    {% if perfil.foto %}
+                        <img src="{% azure_avatar_url perfil %}" alt="Foto de perfil" style="max-width:100%; max-height:100%; object-fit:cover;">
+                    {% else %}
+                        <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:#e2e8f0; color:#718096; font-size:12pt; font-weight:600;">SIN FOTO</div>
+                    {% endif %}
+                </div>
+                <div class="print-name">
+                    {% if perfil %}
+                        {{ perfil.nombres|default:"" }} {{ perfil.apellidos|default:"" }}
+                    {% else %}
+                        TU NOMBRE
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+
+            {% if config and config.mostrar_contacto and sections_config.datos_personales %}
+            <div class="avoid-break">
+                <h3 class="print-section-title">Contacto</h3>
+                
+                {% if perfil and perfil.numerocedula %}
+                <div class="print-info-item">
+                    <div class="print-info-label">Identificación</div>
+                    <div class="print-info-value">{{ perfil.numerocedula }}</div>
+                </div>
+                {% endif %}
+
+                {% if perfil and perfil.telefonoconvencional %}
+                <div class="print-info-item">
+                    <div class="print-info-label">Teléfono</div>
+                    <div class="print-info-value">{{ perfil.telefonoconvencional }}</div>
+                </div>
+                {% endif %}
+
+                {% if perfil and perfil.telefonofijo %}
+                <div class="print-info-item">
+                    <div class="print-info-label">Teléfono fijo</div>
+                    <div class="print-info-value">{{ perfil.telefonofijo }}</div>
+                </div>
+                {% endif %}
+
+                {% if perfil and perfil.direcciondomiciliaria %}
+                <div class="print-info-item">
+                    <div class="print-info-label">Dirección</div>
+                    <div class="print-info-value">{{ perfil.direcciondomiciliaria }}</div>
+                </div>
+                {% endif %}
+
+                {% if perfil and perfil.sitioweb %}
+                <div class="print-info-item">
+                    <div class="print-info-label">Sitio web</div>
+                    <div class="print-info-value">{{ perfil.sitioweb }}</div>
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            {% if sections_config.datos_personales %}
+            <div class="avoid-break">
+                <h3 class="print-section-title">Datos personales</h3>
+
+                <div class="print-info-item">
+                    <div class="print-info-label">Nacionalidad</div>
+                    <div class="print-info-value">{{ perfil.nacionalidad|default:"—" }}</div>
+                </div>
+
+                <div class="print-info-item">
+                    <div class="print-info-label">Lugar de nacimiento</div>
+                    <div class="print-info-value">{{ perfil.lugarnacimiento|default:"—" }}</div>
+                </div>
+
+                <div class="print-info-item">
+                    <div class="print-info-label">Fecha de nacimiento</div>
+                    <div class="print-info-value">
+                        {% if perfil and perfil.fechanacimiento %}
+                            {{ perfil.fechanacimiento|date:"d/m/Y" }}
+                        {% else %}
+                            —
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="print-info-item">
+                    <div class="print-info-label">Sexo</div>
+                    <div class="print-info-value">{{ perfil.sexo|default:"—" }}</div>
+                </div>
+
+                <div class="print-info-item">
+                    <div class="print-info-label">Estado civil</div>
+                    <div class="print-info-value">{{ perfil.estadocivil|default:"—" }}</div>
+                </div>
+
+                <div class="print-info-item">
+                    <div class="print-info-label">Licencia</div>
+                    <div class="print-info-value">{{ perfil.licenciaconducir|default:"—" }}</div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        {% else %}
+        <div style="grid-column: 1; text-align: center; padding: 50px;">
+            <h2 style="color: #1e40af; margin-bottom: 20px;">No hay perfil configurado</h2>
+            <p style="color: #4a5568;">Por favor, configure un perfil en el sistema para ver la vista previa de impresión.</p>
+        </div>
+        {% endif %}
+                </div>
+                <div class="print-name">
+                    {% if perfil %}
+                        {{ perfil.nombres|default:"" }} {{ perfil.apellidos|default:"" }}
+                    {% else %}
+                        TU NOMBRE
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+            {% endif %}
+    </div>
+
+    <!-- Botón para mostrar panel cuando está oculto -->
+    <div id="minimizedPanel" class="minimized-panel" style="display: none;">
+        <button class="toggle-btn" onclick="showPanel()">
+            👁️ Mostrar Panel
+        </button>
+    </div>
+
+    <!-- Mensaje de error si no hay perfil -->
+    {% if not perfil %}
+    <div style="text-align: center; padding: 50px; color: #718096;">
+        <h2 style="color: #e53e3e; margin-bottom: 20px;">Error: No hay un perfil activo</h2>
+        <p>Por favor, configure un perfil en el sistema primero.</p>
+    </div>
+    {% endif %}
+
+    <script>
+        let isDragging = false;
+        let currentX;
+        let currentY;
+        let initialX;
+        let initialY;
+        let xOffset = 0;
+        let yOffset = 0;
+
+        function toggleSection(sectionId) {
+            // Evitar que el evento de clic interumpa el arrastre
+            if (isDragging) return;
+            
+            const section = document.getElementById(sectionId);
+            const checkbox = document.getElementById('toggle-' + sectionId);
+            
+            if (section) {
+                if (checkbox.checked) {
+                    section.style.display = '';
+                    section.style.visibility = 'visible';
+                    section.style.opacity = '1';
+                } else {
+                    section.style.display = 'none';
+                    section.style.visibility = 'hidden';
+                    section.style.opacity = '0';
+                }
+            }
+
+            // Caso especial para productos
+            if (sectionId === 'productos-academicos') {
+                const academicCol = document.getElementById('productos-academicos-col');
+                if (academicCol) {
+                    academicCol.style.display = checkbox.checked ? '' : 'none';
+                }
+            }
+            if (sectionId === 'productos-laborales') {
+                const laborCol = document.getElementById('productos-laborales-col');
+                if (laborCol) {
+                    laborCol.style.display = checkbox.checked ? '' : 'none';
+                }
+            }
+
+            // Ajustar layout cuando se ocultan secciones principales
+            setTimeout(checkLayout, 50); // Pequeño delay para asegurar transición suave
+        }
+
+        function checkLayout() {
+            const container = document.querySelector('.print-cv-container');
+            const sidebar = document.getElementById('datos-personales');
+            const datosPersonalesCheckbox = document.getElementById('toggle-datos-personales');
+            
+            if (!datosPersonalesCheckbox || !datosPersonalesCheckbox.checked) {
+                container.classList.add('no-sidebar');
+                sidebar.style.visibility = 'hidden';
+                sidebar.style.opacity = '0';
+            } else {
+                container.classList.remove('no-sidebar');
+                sidebar.style.visibility = 'visible';
+                sidebar.style.opacity = '1';
+            }
+        }
+
+        function dragStart(e) {
+            // Iniciar solo si se hace clic en el título o en un área vacía del panel
+            const controls = document.getElementById('printControls');
+            const target = e.target;
+            
+            // Permitir arrastre solo en el título o área vacía, no en botones o checkboxes
+            if (target.closest('.controls-title') || 
+                (target === controls || target.classList.contains('print-controls'))) {
+                
+                if (e.type === "touchstart") {
+                    initialX = e.touches[0].clientX - xOffset;
+                    initialY = e.touches[0].clientY - yOffset;
+                } else {
+                    initialX = e.clientX - xOffset;
+                    initialY = e.clientY - yOffset;
+                }
+
+                isDragging = true;
+                controls.style.cursor = 'grabbing';
+                controls.style.animation = 'none';
+                controls.style.zIndex = '1001'; // Elevar z-index al arrastrar
+            }
+        }
+
+                isDragging = true;
+                controls.style.cursor = 'grabbing';
+                controls.style.animation = 'none';
+                controls.style.zIndex = '1001'; // Elevar z-index al arrastrar
+            }
+        }
+
+        function dragEnd(e) {
+            if (isDragging) {
+                initialX = currentX;
+                initialY = currentY;
+                isDragging = false;
+                const controls = document.querySelector('.print-controls');
+                controls.style.cursor = 'move';
+                controls.style.animation = 'panelFloat 4s ease-in-out infinite alternate';
+                controls.style.zIndex = '1000'; // Restaurar z-index normal
+            }
+        }
+
+        function drag(e) {
+            if (isDragging) {
+                e.preventDefault();
+                e.stopPropagation(); // Evitar que otros eventos se activen
+                const controls = document.querySelector('.print-controls');
+                
+                if (e.type === "touchmove") {
+                    currentX = e.touches[0].clientX - initialX;
+                    currentY = e.touches[0].clientY - initialY;
+                } else {
+                    currentX = e.clientX - initialX;
+                    currentY = e.clientY - initialY;
+                }
+
+                xOffset = currentX;
+                yOffset = currentY;
+
+                // Asegurar que no se salga de los límites de la pantalla
+                const rect = controls.getBoundingClientRect();
+                const maxX = window.innerWidth - rect.width - 20;
+                const maxY = window.innerHeight - rect.height - 20;
+
+                if (currentX < 10) currentX = 10;
+                if (currentY < 10) currentY = 10;
+                if (currentX > maxX) currentX = maxX;
+                if (currentY > maxY) currentY = maxY;
+
+                controls.style.transform = `translate(${currentX}px, ${currentY}px)`;
+            }
+        }
+
+        // Inicializar el estado de las secciones según los checkboxes
+        document.addEventListener('DOMContentLoaded', function() {
+            const checkboxes = document.querySelectorAll('.checkbox-item input[type="checkbox"]');
+            checkboxes.forEach(checkbox => {
+                const sectionId = checkbox.id.replace('toggle-', '');
+                toggleSection(sectionId);
+            });
+            checkLayout();
+
+            // Funciones para mostrar/ocultar panel
+        function togglePanel() {
+            const controls = document.getElementById('printControls');
+            const minimizedPanel = document.getElementById('minimizedPanel');
+            
+            if (controls && minimizedPanel) {
+                // Animación de salida
+                controls.style.animation = 'panelExit 0.4s ease-out';
+                controls.style.transform = 'translate(0px, -100px) scale(0.8)';
+                controls.style.opacity = '0';
+                
+                setTimeout(() => {
+                    controls.style.display = 'none';
+                    controls.style.animation = '';
+                    controls.style.transform = '';
+                    controls.style.opacity = '';
+                    
+                    // Mostrar botón de restaurar
+                    minimizedPanel.style.display = 'block';
+                }, 400);
+            }
+        }
+
+        function showPanel() {
+            const controls = document.getElementById('printControls');
+            const minimizedPanel = document.getElementById('minimizedPanel');
+            
+            if (controls && minimizedPanel) {
+                // Ocultar botón de restaurar
+                minimizedPanel.style.display = 'none';
+                
+                // Mostrar panel con animación
+                controls.style.display = 'block';
+                controls.style.animation = 'panelEntrance 0.5s ease-out';
+                controls.style.transform = 'translate(0px, 0px)';
+                
+                // Restaurar posición del panel
+                controls.style.right = '10px';
+                controls.style.top = '10px';
+                
+                // Resetear variables de arrastre
+                xOffset = 0;
+                yOffset = 0;
+                currentX = 0;
+                currentY = 0;
+                
+                setTimeout(() => {
+                    controls.style.animation = 'panelFloat 4s ease-in-out infinite alternate';
+                }, 500);
+            }
+        }
+
+        // Animaciones CSS
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes panelExit {
+                0% {
+                    transform: translate(0px, 0px) scale(1);
+                    opacity: 1;
+                }
+                100% {
+                    transform: translate(0px, -100px) scale(0.8);
+                    opacity: 0;
+                }
+            }
+            
+            @keyframes panelEntrance {
+                0% {
+                    transform: translate(0px, 100px) scale(0.8);
+                    opacity: 0;
+                }
+                50% {
+                    transform: translate(0px, -20px) scale(1.05);
+                    opacity: 0.8;
+                }
+                100% {
+                    transform: translate(0px, 0px) scale(1);
+                    opacity: 1;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Configurar drag and drop solo para el panel y título
+            const controls = document.getElementById('printControls');
+            const titleElement = controls.querySelector('.controls-title');
+            
+            if (controls && titleElement) {
+                // Eventos para el panel completo
+                controls.addEventListener('mousedown', dragStart);
+                
+                // Eventos solo para el título (área de arrastre principal)
+                titleElement.addEventListener('mousedown', dragStart);
+                
+                document.addEventListener('mouseup', dragEnd);
+                document.addEventListener('mousemove', drag);
+                
+                // Touch events para móviles
+                controls.addEventListener('touchstart', dragStart);
+                titleElement.addEventListener('touchstart', dragStart);
+                
+                document.addEventListener('touchend', dragEnd);
+                document.addEventListener('touchmove', drag);
+            }
+        });
+    </script>
+</body>
+</html>

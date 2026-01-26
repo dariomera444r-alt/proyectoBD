@@ -155,7 +155,7 @@ MEDIA_URL_LOCAL = "/media/"
 MEDIA_URL_AZURE_PROXY = "/protected/media/"
 
 if USE_AZURE_MEDIA:
-    print(f"✅ Azure habilitado. Cuenta: {AZURE_ACCOUNT_NAME} | Container: {AZURE_CONTAINER}")
+    print(f"[OK] Azure habilitado. Cuenta: {AZURE_ACCOUNT_NAME} | Container: {AZURE_CONTAINER}")
 
     # Si no hay connection string, lo construimos con name/key
     if not AZURE_CONNECTION_STRING and AZURE_ACCOUNT_NAME and AZURE_ACCOUNT_KEY:
@@ -180,7 +180,7 @@ if USE_AZURE_MEDIA:
         },
     }
 else:
-    print("⚠️ Azure NO habilitado (faltan credenciales o container). Usando MEDIA local.")
+    print("[WARN] Azure NO habilitado (faltan credenciales o container). Usando MEDIA local.")
     MEDIA_URL = MEDIA_URL_LOCAL
 
     STORAGES = {

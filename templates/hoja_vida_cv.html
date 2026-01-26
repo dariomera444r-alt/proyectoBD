@@ -43,7 +43,10 @@
 
     body {
       font-family: 'Inter', system-ui, -apple-system, sans-serif;
-      background: linear-gradient(135deg, #f0f9ff 0%, #f8fafc 100%);
+      background: #010409;
+      background-image: 
+        radial-gradient(circle at 20% 30%, rgba(30, 58, 138, 0.12) 0%, transparent 50%),
+        radial-gradient(circle at 80% 70%, rgba(37, 99, 235, 0.08) 0%, transparent 50%);
       color: var(--dark);
       line-height: 1.6;
       padding: 20px;
@@ -57,12 +60,12 @@
       display: flex;
       gap: 12px;
       z-index: 1000;
-      background: rgba(255, 255, 255, 0.9);
-      backdrop-filter: blur(10px);
+      background: rgba(15, 24, 41, 0.95);
+      backdrop-filter: blur(20px);
       padding: 12px 16px;
       border-radius: var(--radius-lg);
-      box-shadow: var(--shadow);
-      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(96, 165, 250, 0.2);
     }
 
     .btn {
@@ -82,37 +85,157 @@
     }
 
     .btn-primary {
-      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      background: linear-gradient(135deg, #38bdf8, #3b82f6, #1d4ed8);
       color: white;
-      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+      box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+      position: relative;
+      overflow: hidden;
+      border: 2px solid transparent;
+      background-image: linear-gradient(#3b82f6, #3b82f6), 
+                        linear-gradient(135deg, #38bdf8, #3b82f6, #1d4ed8);
+      background-origin: border-box;
+      background-clip: padding-box, border-box;
+      animation: btnPrimaryPulse 3s ease-in-out infinite alternate;
+    }
+
+    @keyframes btnPrimaryPulse {
+      0% {
+        box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+        transform: translateY(0px);
+      }
+      50% {
+        box-shadow: 0 6px 20px rgba(59, 130, 246, 0.6);
+        transform: translateY(-1px);
+      }
+      100% {
+        box-shadow: 0 5px 18px rgba(59, 130, 246, 0.5);
+        transform: translateY(0px);
+      }
+    }
+
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+      transition: left 0.5s ease;
+    }
+
+    .btn-primary:hover::before {
+      left: 100%;
     }
 
     .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4);
+      transform: translateY(-3px) scale(1.05) rotateZ(1deg);
+      box-shadow: 0 8px 25px rgba(59, 130, 246, 0.7);
+      background-image: linear-gradient(#38bdf8, #38bdf8), 
+                        linear-gradient(135deg, #06b6d4, #0891b2, #0e7490);
     }
 
     .btn-secondary {
-      background: var(--white);
-      color: var(--dark);
-      border: 1px solid var(--light-gray);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(59, 130, 246, 0.2));
+      color: #ffffff;
+      border: 2px solid rgba(96, 165, 250, 0.4);
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+      animation: btnSecondaryFloat 4s ease-in-out infinite alternate;
+    }
+
+    @keyframes btnSecondaryFloat {
+      0% {
+        border-color: rgba(96, 165, 250, 0.4);
+        box-shadow: 0 2px 8px rgba(96, 165, 250, 0.2);
+        transform: translateY(0px) rotateZ(0deg);
+      }
+      50% {
+        border-color: rgba(56, 189, 248, 0.6);
+        box-shadow: 0 4px 12px rgba(56, 189, 248, 0.3);
+        transform: translateY(-1px) rotateZ(0.5deg);
+      }
+      100% {
+        border-color: rgba(59, 130, 246, 0.5);
+        box-shadow: 0 3px 10px rgba(59, 130, 246, 0.25);
+        transform: translateY(0px) rotateZ(0deg);
+      }
+    }
+
+    .btn-secondary::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(56, 189, 248, 0.3), transparent);
+      transition: left 0.6s ease;
+    }
+
+    .btn-secondary:hover::before {
+      left: 100%;
     }
 
     .btn-secondary:hover {
-      background: var(--light);
-      transform: translateY(-2px);
-      box-shadow: var(--shadow);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.25), rgba(59, 130, 246, 0.3));
+      border-color: #60a5fa;
+      transform: translateY(-3px) scale(1.03) rotateZ(-1deg);
+      box-shadow: 0 6px 20px rgba(96, 165, 250, 0.4);
+      backdrop-filter: blur(15px);
     }
 
     .btn-outline {
-      background: transparent;
-      color: var(--primary);
-      border: 1px solid var(--primary);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(56, 189, 248, 0.1));
+      color: #38bdf8;
+      border: 2px solid #38bdf8;
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+      animation: btnOutlinePulse 3s ease-in-out infinite alternate;
+    }
+
+    @keyframes btnOutlinePulse {
+      0% {
+        border-color: #38bdf8;
+        box-shadow: 0 2px 8px rgba(56, 189, 248, 0.2);
+        transform: translateY(0px);
+      }
+      50% {
+        border-color: #60a5fa;
+        box-shadow: 0 4px 12px rgba(96, 165, 250, 0.3);
+        transform: translateY(-1px);
+      }
+      100% {
+        border-color: #3b82f6;
+        box-shadow: 0 3px 10px rgba(59, 130, 246, 0.25);
+        transform: translateY(0px);
+      }
+    }
+
+    .btn-outline::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(56, 189, 248, 0.4), transparent);
+      transition: left 0.5s ease;
+    }
+
+    .btn-outline:hover::before {
+      left: 100%;
     }
 
     .btn-outline:hover {
-      background: rgba(37, 99, 235, 0.05);
-      transform: translateY(-2px);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(59, 130, 246, 0.15));
+      border-color: #60a5fa;
+      color: #3b82f6;
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 6px 20px rgba(96, 165, 250, 0.4);
+      backdrop-filter: blur(15px);
     }
 
     .cv-container {
@@ -120,17 +243,17 @@
       transform-origin: top center;
       max-width: 1200px;
       margin: 80px auto 40px;
-      background: var(--white);
+      background: #1e3a8a !important;
       border-radius: var(--radius-lg);
       overflow: hidden;
-      box-shadow: var(--shadow-lg);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(96, 165, 250, 0.1);
       display: grid;
       grid-template-columns: 350px 1fr;
       min-height: calc(100vh - 120px);
     }
 
     .cv-sidebar {
-      background: linear-gradient(180deg, #1a2332 0%, #242d3d 100%);
+      background: linear-gradient(180deg, #1e3a8a 0%, #1e40af 100%);
       padding: 40px 30px;
       position: relative;
       overflow: hidden;
@@ -199,47 +322,155 @@
     }
 
     .name {
-      font-size: 32px;
-      font-weight: 800;
-      color: white;
+      font-size: 36px;
+      font-weight: 900;
       line-height: 1.2;
-      margin-bottom: 8px;
+      margin-bottom: 15px;
       letter-spacing: -0.5px;
+      background: linear-gradient(135deg, #ffffff, #e0e7ff, #c7d2fe);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: 0 4px 15px rgba(255, 255, 255, 0.3);
+      animation: nameShimmer 3s ease-in-out infinite alternate;
+      position: relative;
+    }
+
+    @keyframes nameShimmer {
+      0% {
+        filter: brightness(1);
+        transform: translateY(0px);
+      }
+      100% {
+        filter: brightness(1.2);
+        transform: translateY(-2px);
+      }
+    }
+
+    .name::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      animation: nameShine 4s linear infinite;
+    }
+
+    @keyframes nameShine {
+      0% {
+        transform: translateX(-100%);
+      }
+      100% {
+        transform: translateX(100%);
+      }
     }
 
     /* ===== NUEVO: TEXTO "SOBRE MÍ" DEBAJO DEL NOMBRE ===== */
     .profile-description {
-      color: rgba(255, 255, 255, 0.85);
-      font-size: 15px;
-      font-weight: 400;
-      line-height: 1.5;
-      margin-top: 10px;
-      padding: 10px;
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 8px;
-      border-left: 3px solid var(--primary);
+      color: #e0e7ff;
+      font-size: 16px;
+      font-weight: 500;
+      line-height: 1.6;
+      margin-top: 15px;
+      padding: 15px;
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(37, 99, 235, 0.1));
+      border-radius: 12px;
+      border-left: 4px solid #6366f1;
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+    }
+
+    .profile-description::before {
+      content: '"';
+      position: absolute;
+      top: -20px;
+      left: 10px;
+      font-size: 60px;
+      color: rgba(99, 102, 241, 0.3);
+      font-family: Georgia, serif;
+    }
+
+    .profile-description::after {
+      content: '"';
+      position: absolute;
+      bottom: -40px;
+      right: 10px;
+      font-size: 60px;
+      color: rgba(99, 102, 241, 0.3);
+      font-family: Georgia, serif;
     }
 
     .section-title {
-      color: #e0f2fe;
-      font-size: 14px;
-      font-weight: 800;
+      font-size: 16px;
+      font-weight: 900;
       text-transform: uppercase;
-      letter-spacing: 1.5px;
-      margin-bottom: 20px;
-      padding-bottom: 10px;
-      border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+      letter-spacing: 2px;
+      margin-bottom: 25px;
+      padding-bottom: 15px;
+      border-bottom: 3px solid rgba(56, 189, 248, 0.3);
       position: relative;
+      background: linear-gradient(90deg, #38bdf8, #3b82f6, #1d4ed8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: sidebarTitleGlow 3s ease-in-out infinite alternate;
+    }
+
+    @keyframes sidebarTitleGlow {
+      0% {
+        text-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
+      }
+      100% {
+        text-shadow: 0 0 20px rgba(59, 130, 246, 0.8);
+      }
+    }
+
+    .section-title::before {
+      content: '';
+      position: absolute;
+      bottom: -3px;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: linear-gradient(90deg, #38bdf8, #3b82f6, #1d4ed8);
+      border-radius: 2px;
+      animation: sidebarUnderline 3s linear infinite;
+    }
+
+    @keyframes sidebarUnderline {
+      0% {
+        background-position: -100% 0;
+        opacity: 0.8;
+      }
+      50% {
+        opacity: 1;
+      }
+      100% {
+        background-position: 100% 0;
+        opacity: 0.8;
+      }
     }
 
     .section-title::after {
-      content: '';
+      content: '◆';
       position: absolute;
-      bottom: -2px;
-      left: 0;
-      width: 40px;
-      height: 2px;
-      background: var(--primary);
+      right: 0;
+      bottom: 5px;
+      color: #38bdf8;
+      font-size: 12px;
+      animation: diamondRotate 4s linear infinite;
+    }
+
+    @keyframes diamondRotate {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
     }
 
     .info-item {
@@ -250,70 +481,245 @@
     }
 
     .info-item:hover {
-      border-left-color: var(--primary);
+      border-left-color: #ffffff;
       padding-left: 15px;
     }
 
     .info-label {
-      color: #7dd3fc;
-      font-size: 12px;
-      font-weight: 700;
+      font-size: 13px;
+      font-weight: 800;
       text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-bottom: 4px;
+      letter-spacing: 1.2px;
+      margin-bottom: 6px;
+      background: linear-gradient(90deg, #38bdf8, #3b82f6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      position: relative;
+      padding-left: 20px;
+    }
+
+    .info-label::before {
+      content: '▪';
+      position: absolute;
+      left: 0;
+      color: #38bdf8;
+      font-size: 10px;
+      animation: labelDot 2s ease-in-out infinite;
+    }
+
+    @keyframes labelDot {
+      0%, 100% {
+        opacity: 0.6;
+        transform: scale(1);
+      }
+      50% {
+        opacity: 1;
+        transform: scale(1.3);
+      }
     }
 
     .info-value {
-      color: #f1f5f9;
+      color: #e0e7ff;
       font-weight: 600;
       font-size: 16px;
+      padding: 8px 12px;
+      background: rgba(99, 102, 241, 0.1);
+      border-radius: 8px;
+      border-left: 3px solid #6366f1;
+      transition: all 0.3s ease;
+    }
+
+    .info-value:hover {
+      background: rgba(99, 102, 241, 0.2);
+      transform: translateX(5px);
     }
 
     .info-value a {
-      color: #dbeafe;
+      color: #ffffff;
       text-decoration: none;
       transition: var(--transition);
     }
 
     .info-value a:hover {
-      color: white;
+      color: #dbeafe;
       text-decoration: underline;
     }
 
-    .cv-content {
-      padding: 50px 40px;
-      background: var(--white);
-      overflow-y: auto;
+    .personal-info {
+      margin-bottom: 25px;
+      padding-bottom: 25px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
     }
 
-    .content-section {
-      margin-bottom: 40px;
-      padding-bottom: 30px;
-      border-bottom: 1px solid var(--light-gray);
-    }
-
-    .content-section:last-child {
+    .personal-info:last-of-type {
       border-bottom: none;
       margin-bottom: 0;
       padding-bottom: 0;
     }
 
+    .cv-content {
+      padding: 50px 40px;
+      background: #0a1220 !important;
+      overflow-y: auto;
+      color: #ffffff !important;
+    }
+
+    .cv-content * {
+      color: inherit;
+    }
+
+    .cv-content p,
+    .cv-content h2,
+    .cv-content h3,
+    .cv-content h4,
+    .cv-content h5,
+    .cv-content h6,
+    .cv-content span,
+    .cv-content div {
+      color: #ffffff !important;
+    }
+
+    .content-section {
+      margin-bottom: 30px;
+      padding: 30px;
+      background: rgba(15, 24, 41, 0.7);
+      border-radius: var(--radius);
+      border: 1px solid rgba(96, 165, 250, 0.25);
+      border-left: 4px solid #60a5fa;
+      box-shadow: 
+        0 4px 16px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      transition: var(--transition);
+      backdrop-filter: blur(10px);
+    }
+
+    .content-section:hover {
+      background: rgba(15, 24, 41, 0.85);
+      border-color: rgba(96, 165, 250, 0.5);
+      box-shadow: 
+        0 8px 24px rgba(0, 0, 0, 0.4),
+        0 0 0 1px rgba(96, 165, 250, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      transform: translateY(-2px);
+    }
+
+    .content-section:last-child {
+      margin-bottom: 0;
+    }
+
     .content-title {
-      font-size: 24px;
-      font-weight: 700;
-      color: var(--dark);
-      margin-bottom: 20px;
+      font-size: 28px;
+      font-weight: 800;
+      margin-bottom: 25px;
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 15px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      position: relative;
+      padding-bottom: 15px;
+      background: linear-gradient(135deg, #38bdf8, #3b82f6, #1d4ed8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: none;
+      animation: titleGlow 3s ease-in-out infinite alternate;
+    }
+
+    @keyframes titleGlow {
+      0% {
+        filter: drop-shadow(0 0 20px rgba(56, 189, 248, 0.6));
+        transform: translateY(0px);
+      }
+      50% {
+        filter: drop-shadow(0 0 30px rgba(59, 130, 246, 0.8));
+        transform: translateY(-2px);
+      }
+      100% {
+        filter: drop-shadow(0 0 25px rgba(29, 78, 216, 0.7));
+        transform: translateY(0px);
+      }
     }
 
     .content-title::before {
       content: '';
-      width: 6px;
-      height: 24px;
-      background: var(--primary);
-      border-radius: 3px;
+      width: 8px;
+      height: 32px;
+      background: linear-gradient(180deg, #38bdf8 0%, #3b82f6 50%, #1d4ed8 100%);
+      border-radius: 4px;
+      box-shadow: 0 4px 15px rgba(56, 189, 248, 0.6);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .content-title::before {
+      animation: titleBarPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes titleBarPulse {
+      0%, 100% {
+        box-shadow: 0 4px 15px rgba(56, 189, 248, 0.6);
+        transform: scaleX(1);
+      }
+      50% {
+        box-shadow: 0 6px 20px rgba(59, 130, 246, 0.9);
+        transform: scaleX(1.1);
+      }
+    }
+
+    .content-title::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, #38bdf8, #3b82f6, #1d4ed8, transparent);
+      border-radius: 2px;
+      animation: titleUnderline 3s linear infinite;
+    }
+
+    @keyframes titleUnderline {
+      0% {
+        background-position: -100% 0;
+        opacity: 0.7;
+      }
+      50% {
+        opacity: 1;
+      }
+      100% {
+        background-position: 100% 0;
+        opacity: 0.7;
+      }
+    }
+
+    /* Estilos especiales para la sección de Venta Garage */
+    .content-section:has(h2:contains("Venta garage")) {
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.08) 0%, rgba(124, 58, 237, 0.05) 100%);
+      padding: 30px;
+      border-radius: var(--radius-lg);
+      border: 2px solid var(--primary);
+      margin-bottom: 40px;
+      box-shadow: 0 8px 24px rgba(37, 99, 235, 0.1);
+    }
+
+    .content-section:has(h2:contains("Venta garage")) .content-title {
+      color: var(--primary);
+      font-size: 26px;
+      margin-bottom: 25px;
+    }
+
+    .content-section:has(h2:contains("Venta garage")) .btn-primary {
+      font-size: 15px;
+      padding: 12px 26px;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      box-shadow: 0 6px 20px rgba(37, 99, 235, 0.3);
+    }
+
+    .content-section:has(h2:contains("Venta garage")) .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 28px rgba(37, 99, 235, 0.4);
     }
 
     .section-text {
@@ -327,37 +733,40 @@
       display: grid;
       grid-template-columns: 100px 1fr;
       gap: 30px;
-      margin-bottom: 30px;
+      margin-bottom: 20px;
       padding: 20px;
       border-radius: var(--radius);
-      background: var(--white);
-      border: 1px solid transparent;
+      background: rgba(10, 18, 32, 0.5);
+      border: 1px solid rgba(96, 165, 250, 0.15);
       transition: var(--transition);
       position: relative;
     }
 
     .timeline-item:hover {
-      border-color: var(--light-gray);
-      box-shadow: var(--shadow);
-      transform: translateY(-2px);
+      background: rgba(10, 18, 32, 0.7);
+      border-color: rgba(96, 165, 250, 0.3);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      transform: translateX(4px);
     }
 
     .timeline-year {
       font-size: 16px;
       font-weight: 700;
-      color: var(--primary);
+      color: #60a5fa;
       display: flex;
       align-items: center;
       gap: 6px;
+      text-shadow: 0 2px 4px rgba(96, 165, 250, 0.3);
     }
 
     .timeline-year::before {
       content: '';
       width: 12px;
       height: 12px;
-      background: var(--primary);
+      background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
       border-radius: 50%;
       display: inline-block;
+      box-shadow: 0 0 8px rgba(96, 165, 250, 0.6), inset 0 1px 2px rgba(255, 255, 255, 0.3);
     }
 
     .timeline-content {
@@ -365,30 +774,202 @@
     }
 
     .timeline-title {
-      font-size: 18px;
-      font-weight: 700;
-      color: var(--dark);
-      margin-bottom: 8px;
+      font-size: 20px;
+      font-weight: 800;
+      color: #60a5fa !important;
+      margin-bottom: 10px;
+      text-shadow: 0 2px 8px rgba(96, 165, 250, 0.4);
+      position: relative;
+      padding-left: 15px;
+    }
+
+    .timeline-title::before {
+      content: '▸';
+      position: absolute;
+      left: 0;
+      color: #3b82f6;
+      font-size: 16px;
+      animation: titleArrow 2s ease-in-out infinite;
+    }
+
+    @keyframes titleArrow {
+      0%, 100% {
+        transform: translateX(0px);
+        color: #3b82f6;
+      }
+      50% {
+        transform: translateX(3px);
+        color: #60a5fa;
+      }
     }
 
     .timeline-subtitle {
-      font-size: 15px;
-      color: var(--gray);
-      margin-bottom: 12px;
-      font-weight: 500;
+      font-size: 16px;
+      color: #60a5fa !important;
+      margin-bottom: 15px;
+      font-weight: 600;
+      background: linear-gradient(90deg, #60a5fa, #3b82f6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
 
     .timeline-description {
-      color: #64748b;
-      font-size: 15px;
-      line-height: 1.6;
-      margin-bottom: 15px;
+      color: #e0e7ff !important;
+      font-size: 16px;
+      line-height: 1.7;
+      margin-bottom: 20px;
+      padding: 15px;
+      background: rgba(99, 102, 241, 0.1);
+      border-left: 4px solid #6366f1;
+      border-radius: 8px;
+      backdrop-filter: blur(5px);
+    }
+
+    .timeline-year {
+      font-size: 18px;
+      font-weight: 800;
+      color: #10b981 !important;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-shadow: 0 2px 8px rgba(16, 185, 129, 0.4);
+    }
+
+    .timeline-year::before {
+      content: '';
+      width: 16px;
+      height: 16px;
+      background: linear-gradient(135deg, #10b981, #059669);
+      border-radius: 50%;
+      display: inline-block;
+      box-shadow: 0 0 15px rgba(16, 185, 129, 0.8);
+      animation: yearPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes yearPulse {
+      0%, 100% {
+        box-shadow: 0 0 15px rgba(16, 185, 129, 0.8);
+        transform: scale(1);
+      }
+      50% {
+        box-shadow: 0 0 25px rgba(16, 185, 129, 1);
+        transform: scale(1.1);
+      }
     }
 
     .certificate-actions {
       display: flex;
-      gap: 10px;
-      margin-top: 15px;
+      gap: 12px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+
+    .certificate-actions .btn {
+      position: relative;
+      overflow: hidden;
+      border-radius: 10px;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      transform-style: preserve-3d;
+      animation: buttonFloat 3s ease-in-out infinite;
+    }
+
+    .certificate-actions .btn:nth-child(2) {
+      animation-delay: 0.3s;
+    }
+
+    @keyframes buttonFloat {
+      0%, 100% {
+        transform: translateY(0px) rotateX(0deg);
+      }
+      25% {
+        transform: translateY(-3px) rotateX(2deg);
+      }
+      75% {
+        transform: translateY(-1px) rotateX(-1deg);
+      }
+    }
+
+    .certificate-actions .btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      transition: left 0.5s ease;
+    }
+
+    .certificate-actions .btn:hover::before {
+      left: 100%;
+    }
+
+    .certificate-actions .btn:hover {
+      transform: translateY(-4px) scale(1.05);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    .certificate-actions .btn-outline {
+      background: linear-gradient(135deg, rgba(96, 165, 250, 0.1), rgba(37, 99, 235, 0.2));
+      border: 2px solid #60a5fa;
+      color: #60a5fa;
+      backdrop-filter: blur(10px);
+    }
+
+    .certificate-actions .btn-outline:hover {
+      background: linear-gradient(135deg, rgba(96, 165, 250, 0.2), rgba(37, 99, 235, 0.3));
+      border-color: #3b82f6;
+      color: #ffffff;
+      text-shadow: 0 0 10px rgba(96, 165, 250, 0.8);
+    }
+
+    .certificate-actions .btn-primary {
+      background: linear-gradient(135deg, #06b6d4, #0891b2, #0e7490);
+      border: none;
+      color: white;
+      box-shadow: 0 4px 15px rgba(6, 182, 212, 0.4);
+      position: relative;
+    }
+
+    .certificate-actions .btn-primary::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 10px;
+      padding: 2px;
+      background: linear-gradient(45deg, #38bdf8, #06b6d4, #38bdf8);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      opacity: 0;
+      animation: borderGlow 3s linear infinite;
+    }
+
+    @keyframes borderGlow {
+      0%, 100% {
+        opacity: 0;
+        transform: rotate(0deg);
+      }
+      50% {
+        opacity: 1;
+        transform: rotate(180deg);
+      }
+    }
+
+    .certificate-actions .btn-primary:hover {
+      background: linear-gradient(135deg, #38bdf8, #06b6d4, #0e7490);
+      transform: translateY(-4px) scale(1.05) rotateY(5deg);
+      box-shadow: 0 12px 30px rgba(6, 182, 212, 0.6);
+    }
+
+    .certificate-actions .btn svg {
+      transition: all 0.3s ease;
+    }
+
+    .certificate-actions .btn:hover svg {
+      transform: scale(1.2) rotate(10deg);
+      filter: drop-shadow(0 0 5px currentColor);
     }
 
     .skills-container {
@@ -399,19 +980,19 @@
     }
 
     .skill-tag {
-      background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
-      color: var(--primary-dark);
+      background: rgba(96, 165, 250, 0.15);
+      color: #60a5fa;
       padding: 8px 16px;
       border-radius: 50px;
       font-size: 14px;
       font-weight: 600;
-      border: 1px solid #bae6fd;
+      border: 1px solid #60a5fa;
       transition: var(--transition);
     }
 
     .skill-tag:hover {
-      background: linear-gradient(135deg, #e0f2fe, #bae6fd);
-      transform: translateY(-2px);
+      background: rgba(96, 165, 250, 0.25);
+      transform: none;
     }
 
     .products-grid {
@@ -422,38 +1003,54 @@
     }
 
     .product-column {
-      background: #f8fafc;
+      background: rgba(10, 18, 32, 0.6);
       padding: 24px;
       border-radius: var(--radius);
-      border: 1px solid var(--light-gray);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+      border: 1px solid rgba(96, 165, 250, 0.2);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+      transition: var(--transition);
+      backdrop-filter: blur(10px);
+    }
+
+    .product-column:hover {
+      background: rgba(10, 18, 32, 0.75);
+      border-color: rgba(96, 165, 250, 0.35);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(96, 165, 250, 0.25);
     }
 
     .product-column-title {
       font-size: 18px;
       font-weight: 800;
-      color: var(--dark);
+      color: #60a5fa !important;
       margin-bottom: 20px;
       padding-bottom: 12px;
-      border-bottom: 2px solid var(--light-gray);
+      border-bottom: 2px solid #60a5fa;
       letter-spacing: 0.5px;
     }
 
     .product-item {
-      margin-bottom: 24px;
-      padding-bottom: 18px;
-      border-bottom: 1px dashed var(--light-gray);
+      margin-bottom: 20px;
+      padding: 18px;
+      border-radius: 10px;
+      background: rgba(15, 24, 41, 0.4);
+      border: 1px solid rgba(96, 165, 250, 0.1);
+      transition: var(--transition);
+    }
+
+    .product-item:hover {
+      background: rgba(15, 24, 41, 0.6);
+      border-color: rgba(96, 165, 250, 0.25);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     }
 
     .product-item:last-child {
-      border-bottom: none;
       margin-bottom: 0;
-      padding-bottom: 0;
     }
 
     .product-name {
       font-weight: 700;
-      color: var(--dark);
+      color: #ffffff !important;
       margin-bottom: 10px;
       font-size: 16px;
       line-height: 1.4;
@@ -462,20 +1059,20 @@
 
     .product-description {
       font-size: 15px;
-      color: #64748b;
+      color: #bfdbfe !important;
       line-height: 1.7;
       margin-top: 8px;
       margin-bottom: 12px;
     }
 
     .product-item .skill-tag {
-      background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
-      color: var(--primary-dark);
+      background: rgba(96, 165, 250, 0.2);
+      color: #60a5fa;
       padding: 8px 16px;
       border-radius: 50px;
       font-size: 13px;
       font-weight: 700;
-      border: 1px solid #bae6fd;
+      border: 1px solid #60a5fa;
       transition: var(--transition);
       margin-bottom: 12px;
       display: inline-block;
@@ -484,11 +1081,12 @@
     .empty-state {
       text-align: center;
       padding: 40px 20px;
-      color: var(--gray);
+      color: #93c5fd;
       font-style: italic;
-      background: #f8fafc;
+      background: rgba(10, 18, 32, 0.6);
       border-radius: var(--radius);
-      border: 2px dashed #e2e8f0;
+      border: 2px dashed rgba(96, 165, 250, 0.3);
+      box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.2);
     }
 
     @media print {
@@ -502,7 +1100,9 @@
       }
       
       .cv-container {
+        background: #1e3a8a !important;  /* ← CAMBIAR de white a azul */
         margin: 0;
+        color: #ffffff !important;  /* ← IMPORTANTE: texto blanco */
         box-shadow: none;
         border-radius: 0;
         min-height: auto;
@@ -570,114 +1170,275 @@
     }
 
     .cv-content::-webkit-scrollbar-track {
-      background: #f1f1f1;
+      background: rgba(255, 255, 255, 0.1);
       border-radius: 4px;
     }
 
     .cv-content::-webkit-scrollbar-thumb {
-      background: #c1c1c1;
+      background: rgba(96, 165, 250, 0.5);
       border-radius: 4px;
     }
 
     .cv-content::-webkit-scrollbar-thumb:hover {
-      background: #a1a1a1;
+      background: rgba(96, 165, 250, 0.7);
     }
 
-    /* ====== MODO OSCURO ====== */
-    body {
-      background: linear-gradient(135deg, #060a13 0%, #0b1220 100%);
-      color: #e5e7eb;
+    /* ====== ESTILOS PRINCIPALES ====== */
+
+    .section-text {
+      color: #bfdbfe;
+      font-size: 16px;
+      line-height: 1.7;
+      margin-bottom: 20px;
+    }
     }
 
-    .cv-container {
-      background: #0b1220;
-      border: 1px solid rgba(255,255,255,0.06);
+    /* ===== MODAL DE IMPRESIÓN ===== */
+    .print-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
     }
 
-    .cv-content {
-      background: #0b1220;
-      color: #e5e7eb;
+    .print-modal.active {
+      display: flex;
     }
 
-    .content-title {
-      color: #f8fafc;
+    .print-modal-content {
+      background: #1e3a8a;
+      border-radius: var(--radius-lg);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+      border: 1px solid rgba(96, 165, 250, 0.3);
+      max-width: 600px;
+      width: 90%;
+      max-height: 90vh;
+      overflow: hidden;
+      animation: modalSlideIn 0.3s ease-out;
+      backdrop-filter: blur(20px);
+      position: relative;
     }
 
-    .section-text,
-    .timeline-description,
-    .product-description {
-      color: #cbd5e1;
+    @keyframes modalSlideIn {
+      from {
+        transform: translateY(-20px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
     }
 
-    .timeline-item {
-      background: #0f172a;
-      border: 1px solid rgba(255,255,255,0.06);
+    .print-modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 24px;
+      border-bottom: 1px solid rgba(96, 165, 250, 0.2);
+      gap: 16px;
+      grid-column: 1 / -1;
+      background: rgba(15, 24, 41, 0.8);
+      position: sticky;
+      top: 0;
+      z-index: 10;
     }
 
-    .timeline-title {
-      color: #f8fafc;
+    .print-modal-header h2 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 700;
+      color: #ffffff !important;
     }
 
-    .timeline-subtitle {
-      color: #94a3b8;
+    .print-modal-close {
+      background: none;
+      border: none;
+      font-size: 28px;
+      cursor: pointer;
+      color: var(--gray);
+      padding: 0;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
     }
 
-    .product-column {
-      background: #0f172a;
-      border: 1px solid rgba(255,255,255,0.06);
+    .print-modal-close:hover {
+      color: var(--dark);
+      transform: scale(1.2);
     }
 
-    .product-column-title {
-      color: #f8fafc;
-      border-bottom-color: rgba(255,255,255,0.08);
+    .print-modal-body {
+      padding: 24px;
+      color: #dbeafe !important;
+      text-align: center;
+      max-height: 60vh;
+      overflow-y: auto;
     }
 
-    .empty-state {
-      background: #0f172a;
-      border-color: rgba(255,255,255,0.12);
-      color: #94a3b8;
+    .print-preview-container {
+      background: #f5f5f5;
+      border-radius: 8px;
+      padding: 10px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      overflow: auto;
+      color: #000000;
+      position: relative;
+      height: 100%;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
     }
 
-    .toolbar {
-      background: rgba(15, 23, 42, 0.75);
-      border: 1px solid rgba(255,255,255,0.08);
+    .print-preview-container .cv-container {
+      transform: scale(0.55) !important;
+      transform-origin: top center !important;
+      width: 181.8% !important;
+      margin: 0 auto !important;
+      max-width: none !important;
     }
 
-    .btn-secondary {
-      background: rgba(255,255,255,0.06);
-      color: #e5e7eb;
-      border-color: rgba(255,255,255,0.10);
+    .print-preview-container * {
+      box-sizing: border-box;
     }
 
-    .btn-secondary:hover {
-      background: rgba(255,255,255,0.10);
+    .print-preview-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #60a5fa;
+      margin-bottom: 15px;
+      text-align: left;
+      padding-bottom: 10px;
+      border-bottom: 2px solid rgba(96, 165, 250, 0.3);
     }
 
-    .btn-outline {
-      color: #93c5fd;
-      border-color: #93c5fd;
+    .print-modal-body p {
+      margin: 0 0 16px 0;
+      color: #bfdbfe !important;
+      font-size: 14px;
+      font-weight: 500;
     }
 
-    .btn-outline:hover {
-      background: rgba(147, 197, 253, 0.10);
+    .print-modal-body p:last-of-type {
+      margin-bottom: 0;
     }
 
+    .checkbox-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 16px;
+    }
 
-    /* =============================
-   FORMATO DE IMPRESIÓN CV A4
+    .print-sections {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .checkbox-item {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 12px;
+      background: rgba(10, 18, 32, 0.6);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: var(--transition);
+      border: 1px solid rgba(96, 165, 250, 0.2);
+      text-align: center;
+      width: 100%;
+    }
+
+    .checkbox-item:hover {
+      background: rgba(10, 18, 32, 0.8);
+      border-color: rgba(96, 165, 250, 0.4);
+    }
+
+    .checkbox-item input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+      accent-color: var(--primary);
+      margin: 0;
+    }
+
+    .checkbox-item span {
+      cursor: pointer;
+      font-weight: 500;
+      color: #ffffff !important;
+      margin: 0;
+      user-select: none;
+      font-size: 14px;
+      text-align: left;
+      flex: 1;
+    }
+
+    .checkbox-item label {
+      width: 100%;
+      cursor: pointer;
+      font-weight: 500;
+      color: #ffffff !important;
+      margin: 0;
+      user-select: none;
+      text-align: left;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 10px;
+    }
+
+    .print-modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      padding: 20px 24px;
+      border-top: 1px solid rgba(96, 165, 250, 0.2);
+      background: rgba(15, 24, 41, 0.8);
+      grid-column: 1 / -1;
+      position: sticky;
+      bottom: 0;
+      z-index: 10;
+    }
+
+    .print-modal-footer .btn {
+      flex: 0 1 auto;
+    }
+
+/* =============================
+   FORMATO DE IMPRESIÓN CV PROFESIONAL A4
    ============================= */
 @media print {
-
   @page {
     size: A4;
-    margin: 1.2cm;
+    margin: 1.5cm 2cm 2cm 2cm;
+  }
+
+  * {
+    -webkit-print-color-adjust: exact !important;
+    color-adjust: exact !important;
+    print-color-adjust: exact !important;
   }
 
   body {
-    background: white !important;
-    color: #111827 !important;
+    background: #ffffff !important;
+    color: #1a202c !important;
     padding: 0;
-    font-size: 11.5pt;
+    font-family: 'Times New Roman', serif;
+    font-size: 11pt;
+    line-height: 1.4;
+    margin: 0;
   }
 
   .toolbar,
@@ -694,37 +1455,365 @@
     margin: 0;
     border-radius: 0;
     box-shadow: none;
-    background: white;
+    background: #ffffff !important;
+    gap: 20px;
+    transform: none !important;
   }
 
-  /* ===== COLUMNA IZQUIERDA ===== */
+  /* ===== COLUMNA IZQUIERDA - DATOS PERSONALES ===== */
   .cv-sidebar {
-    background: #1e3a8a !important;
-    color: white !important;
-    padding: 24px 18px;
+    background: #f8fafc !important;
+    color: #1a202c !important;
+    padding: 0;
+    border-right: 2px solid #e2e8f0;
+    font-size: 10pt;
+    page-break-inside: avoid;
+  }
+
+  .avatar-container {
+    text-align: center;
+    margin-bottom: 20px;
+    padding: 15px 0;
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  .avatar {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 15px;
+    border: 3px solid #4a5568;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #e2e8f0;
+  }
+
+  .avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .avatar-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #e2e8f0;
+    color: #718096;
+    font-size: 12pt;
+    font-weight: 600;
   }
 
   .name {
-    font-size: 20pt;
-    margin-bottom: 10px;
-    color: rgb(73, 73, 73) !important;
+    font-size: 18pt;
+    font-weight: 700;
+    color: #1a202c !important;
+    margin-bottom: 8px;
+    text-align: center;
+    line-height: 1.2;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .profile-description {
+    font-size: 10pt;
+    color: #4a5568 !important;
+    line-height: 1.4;
+    margin: 10px 0;
+    text-align: center;
+    font-style: italic;
+    padding: 8px;
+    background: #f1f5f9;
+    border-radius: 4px;
   }
 
   .section-title {
-    font-size: 10pt;
-    border-bottom: 1px solid rgba(255,255,255,0.3);
-    margin-top: 20px;
-    color: rgb(148, 144, 144) !important;
+    font-size: 11pt;
+    font-weight: 700;
+    color: #2d3748 !important;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 20px 0 12px 0;
+    padding: 8px 0;
+    border-bottom: 2px solid #4a5568;
+    text-align: center;
+  }
+
+  .personal-info {
+    margin-bottom: 15px;
+    padding: 0 10px;
+  }
+
+  .info-item {
+    margin-bottom: 8px;
+    padding: 4px 0;
+    border-bottom: 1px solid #f1f5f9;
+  }
+
+  .info-item:last-child {
+    border-bottom: none;
   }
 
   .info-label {
+    font-size: 9pt;
+    font-weight: 600;
+    color: #718096 !important;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 2px;
+  }
+
+  .info-value {
+    font-size: 10pt;
+    color: #1a202c !important;
+    font-weight: 500;
+    line-height: 1.3;
+  }
+
+  .info-value a {
+    color: #2b6cb0 !important;
+    text-decoration: none;
+  }
+
+  /* ===== COLUMNA DERECHA - CONTENIDO ===== */
+  .cv-content {
+    background: #ffffff !important;
+    padding: 0;
+    color: #1a202c !important;
+    overflow: visible;
+  }
+
+  .content-section {
+    margin-bottom: 20px;
+    padding: 15px 0;
+    border-bottom: 1px solid #e2e8f0;
+    page-break-inside: avoid;
+  }
+
+  .content-section:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+  }
+
+  .content-title {
+    font-size: 14pt;
+    font-weight: 700;
+    color: #2d3748 !important;
+    margin: 0 0 15px 0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: 2px solid #4a5568;
+    padding-bottom: 5px;
+  }
+
+  .content-title::before {
+    content: '';
+    width: 6px;
+    height: 14pt;
+    background: #4a5568;
+    display: inline-block;
+    margin-right: 8px;
+    border-radius: 2px;
+  }
+
+  .timeline-item {
+    margin-bottom: 12px;
+    padding: 8px 0;
+    border-left: 3px solid #cbd5e0;
+    padding-left: 12px;
+    background: #f8fafc;
+    page-break-inside: avoid;
+  }
+
+  .timeline-year {
+    font-size: 11pt;
+    font-weight: 700;
+    color: #2b6cb0 !important;
+    margin-bottom: 4px;
+    display: inline-block;
+    background: #ebf8ff;
+    padding: 2px 8px;
+    border-radius: 3px;
+  }
+
+  .timeline-title {
+    font-size: 12pt;
+    font-weight: 700;
+    color: #1a202c !important;
+    margin: 0 0 4px 0;
+    line-height: 1.3;
+  }
+
+  .timeline-subtitle {
+    font-size: 10pt;
+    color: #4a5568 !important;
+    margin-bottom: 6px;
+    line-height: 1.4;
+    font-weight: 500;
+  }
+
+  .timeline-description {
+    font-size: 10pt;
+    color: #2d3748 !important;
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .certificate-actions {
+    display: flex !important;
+    gap: 10px !important;
+    margin-top: 15px !important;
+  }
+
+  .products-grid {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 15px;
+    margin-top: 10px;
+  }
+
+  .product-column {
+    background: #f8fafc !important;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    padding: 12px;
+  }
+
+  .product-column-title {
+    font-size: 11pt;
+    font-weight: 700;
+    color: #2d3748 !important;
+    margin: 0 0 10px 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .product-item {
+    margin-bottom: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid #f1f5f9;
+  }
+
+  .product-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+  }
+
+  .product-name {
+    font-size: 10pt;
+    font-weight: 600;
+    color: #1a202c !important;
+    margin: 0 0 4px 0;
+    line-height: 1.3;
+  }
+
+  .product-description {
+    font-size: 9pt;
+    color: #4a5568 !important;
+    line-height: 1.4;
+    margin: 0;
+  }
+
+  .skill-tag {
+    font-size: 9pt;
+    font-weight: 600;
+    background: #e6fffa !important;
+    color: #065f46 !important;
+    padding: 3px 8px;
+    border-radius: 12px;
+    display: inline-block;
+    margin: 2px 4px 2px 0;
+    border: 1px solid #a7f3d0;
+  }
+
+  .empty-state {
+    font-size: 10pt;
+    color: #a0aec0 !important;
+    font-style: italic;
+    text-align: center;
+    padding: 15px;
+    background: #f8fafc;
+    border-radius: 4px;
+    border: 1px solid #e2e8f0;
+  }
+
+  /* Links */
+  a {
+    color: #2b6cb0 !important;
+    text-decoration: underline !important;
+  }
+
+  a:hover {
+    text-decoration: none !important;
+  }
+
+  /* Ocultar secciones según selección */
+  [data-section="datos-personales"] {
+    display: block !important;
+  }
+
+  [data-section="experiencia"] {
+    display: block !important;
+  }
+
+  [data-section="cursos"] {
+    display: block !important;
+  }
+
+  [data-section="reconocimientos"] {
+    display: block !important;
+  }
+
+  [data-section="productos-academicos"] {
+    display: block !important;
+  }
+
+  [data-section="productos-laborales"] {
+    display: block !important;
+  }
+
+  section.content-section[style*="display: none"] {
+    display: none !important;
+  }
+
+  /* Mejoras de legibilidad y formato profesional */
+  h1, h2, h3, h4, h5, h6 {
+    page-break-after: avoid;
+    orphans: 2;
+    widows: 2;
+    color: #1a202c !important;
+  }
+
+  .timeline-item,
+  .content-section,
+  .personal-info {
+    page-break-inside: avoid;
+  }
+
+  /* Espaciado profesional */
+  .cv-sidebar .personal-info {
+    margin-bottom: 20px;
+  }
+
+  .cv-content .content-section {
+    margin-bottom: 25px;
+  }
+
+  /* Footer invisible para separación */
+  .cv-container::after {
+    content: '';
+    display: block;
+    height: 30px;
+  }
+}
     font-size: 8pt;
-    color: #5a4a4a !important;
+    color: #ffffff !important;
   }
 
   .info-value {
     font-size: 9.5pt;
-    color: white !important;
+    color: #ffffff !important;
   }
 
   /* FOTO */
@@ -738,8 +1827,8 @@
   /* ===== COLUMNA DERECHA ===== */
   .cv-content {
     padding: 26px 28px;
-    background: white !important;
-    color: #111827 !important;
+    background: #0a1220 !important;
+    color: #ffffff !important;
   }
 
   .content-section {
@@ -787,9 +1876,29 @@
     color: #374151;
   }
 
-  /* BOTONES CERTIFICADOS OCULTOS */
+  /* BOTONES CERTIFICADOS VISIBLES */
   .certificate-actions {
-    display: none !important;
+    display: flex !important;
+    gap: 8px !important;
+    margin-top: 10px !important;
+  }
+
+  .certificate-actions .btn {
+    transform: none !important;
+    animation: none !important;
+  }
+
+  .certificate-actions .btn:hover {
+    transform: scale(1.05) !important;
+  }
+
+  .certificate-actions .btn {
+    transform: none !important;
+    animation: none !important;
+  }
+
+  .certificate-actions .btn:hover {
+    transform: scale(1.05) !important;
   }
 
   /* SECCIONES NO TÍPICAS DE CV */
@@ -840,7 +1949,7 @@
 
   /* “Sobre mí” bajo el nombre, versión impresión */
   .about-inline{
-    color: #fde68a !important;   /* amarillo suave, destaca mucho */
+    color: #38bdf8 !important;   /* azul brillante, elegante */
     background: rgba(255,255,255,0.10) !important;
     border-left: 3px solid rgba(255,255,255,0.45) !important;
   }
@@ -850,22 +1959,28 @@
    SIDEBAR: mejor contraste (pantalla)
    ============================ */
 .cv-sidebar .section-title{
-  color: #1e3a8a !important;
+  background: linear-gradient(90deg, #38bdf8, #3b82f6) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
 }
 
 .cv-sidebar .info-label{
-  color: #43556d !important;   /* azul claro muy visible */
+  background: linear-gradient(90deg, #38bdf8, #3b82f6) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
   font-weight: 800 !important;
   letter-spacing: 1.2px;
 }
 
 .cv-sidebar .info-value{
-  color: #616161 !important;   /* blanco sólido */
+  color: #e0e7ff !important;
   font-weight: 650 !important;
 }
 
 .cv-sidebar .info-value a{
-  color: #ffffff !important;
+  color: #60a5fa !important;
   text-decoration: underline;
 }
 
@@ -876,24 +1991,24 @@
 <body>
 
   <div class="toolbar">
-    <button class="btn btn-primary" onclick="window.print()">
+    <button class="btn btn-primary" onclick="window.open('{% url 'print_preview' %}', '_blank', 'width=1000,height=800,scrollbars=yes,resizable=yes');">
       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M6 9V2h12v7"></path>
         <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
         <path d="M6 14h12v8H6z"></path>
       </svg>
-      Imprimir
+      Imprimir CV
     </button>
 
     {% if request.user.is_authenticated and request.user.is_staff %}
-      <a class="btn btn-secondary" href="/admin/" rel="nofollow">
+      <a class="btn btn-secondary" href="{% url 'admin:index' %}">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
         </svg>
         Admin
       </a>
     {% else %}
-      <a class="btn btn-secondary" href="/admin/login/?next=/admin/" rel="nofollow">
+      <a class="btn btn-secondary" href="{% url 'admin:login' %}?next={% url 'admin:index' %}">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
           <polyline points="10 17 15 12 10 7"></polyline>
@@ -906,7 +2021,14 @@
     {% obtener_config_visibilidad as config %}
     {% if config.mostrar_cv_descargable %}
       {% if perfil and perfil.cv_pdf %}
-        <a class="btn btn-outline" href="{% azure_file_url perfil 'cv_pdf' %}?download=1" target="_blank" rel="noopener">
+        <a class="btn btn-secondary" href="{% azure_file_url perfil 'cv_pdf' %}" target="_blank" rel="noopener" title="Ver CV en nueva pestaña">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+            <circle cx="12" cy="12" r="3"></circle>
+          </svg>
+          Ver CV
+        </a>
+        <a class="btn btn-outline" href="{% azure_file_url perfil 'cv_pdf' %}?download=1" download target="_blank" rel="noopener" title="Descargar CV">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
             <polyline points="7 10 12 15 17 10"></polyline>
@@ -918,19 +2040,96 @@
     {% endif %}
   </div>
 
+  <!-- Modal de opciones de impresión -->
+  <div id="printModal" class="print-modal">
+    <div class="print-modal-content">
+      <div class="print-modal-header">
+        <h2>Opciones de Impresión</h2>
+        <button class="print-modal-close" onclick="closePrintModal()">&times;</button>
+      </div>
+      
+      <div class="print-modal-body">
+        <div class="print-sections">
+          <label class="checkbox-item">
+            <input type="checkbox" id="print-datos-personales" checked onchange="updatePreview()">
+            <span>Datos Personales</span>
+          </label>
+          
+          <label class="checkbox-item">
+            <input type="checkbox" id="print-experiencia" checked onchange="updatePreview()">
+            <span>Experiencia Laboral</span>
+          </label>
+          
+          <label class="checkbox-item">
+            <input type="checkbox" id="print-cursos" checked onchange="updatePreview()">
+            <span>Cursos Realizados</span>
+          </label>
+          
+          <label class="checkbox-item">
+            <input type="checkbox" id="print-reconocimientos" checked onchange="updatePreview()">
+            <span>Reconocimientos</span>
+          </label>
+          
+          <label class="checkbox-item">
+            <input type="checkbox" id="print-productos-academicos" checked onchange="updatePreview()">
+            <span>Productos Académicos</span>
+          </label>
+          
+          <label class="checkbox-item">
+            <input type="checkbox" id="print-productos-laborales" checked onchange="updatePreview()">
+            <span>Productos Laborales</span>
+          </label>
+          
+          <label class="checkbox-item">
+            <input type="checkbox" id="print-venta-garage" checked onchange="updatePreview()">
+            <span>Venta Garage</span>
+          </label>
+        </div>
+      </div>
+      
+
+      
+      <div class="print-modal-footer">
+        <button class="btn btn-secondary" onclick="closePrintModal()" type="button">Cancelar</button>
+        <button class="btn btn-primary" onclick="doPrint()" type="button">Imprimir</button>
+      </div>
+    </div>
+  </div>
+
   <div class="cv-container">
-    
+    {% if is_preview or is_download %}
+      <!-- Forzar impresión automática en vista previa/descarga -->
+      <style>
+        @media print { body { -webkit-print-color-adjust: exact; } }
+      </style>
+      <script>
+        window.onload = function() {
+          {% if is_download %}
+            // Para descarga, imprimir automáticamente
+            window.print();
+          {% endif %}
+        };
+      </script>
+    {% endif %}
+
+    {% if not sections_config.datos_personales %}
+    <style>
+      .cv-sidebar { display: none !important; }
+      .cv-container { grid-template-columns: 1fr !important; }
+    </style>
+    {% endif %}
+
     <aside class="cv-sidebar">
       {% load azure_tags %}
       {% obtener_config_visibilidad as config %}
 
-      {% if config.mostrar_foto_perfil %}
+      {% if config.mostrar_foto_perfil and sections_config.datos_personales %}
       <div class="avatar-container">
         <div class="avatar">
           {% if perfil.foto %}
-            <img id="avatar-img" 
-                 src="{% azure_avatar_url perfil %}" 
-                 alt="Foto de perfil" 
+            <img id="avatar-img"
+                 src="{% azure_avatar_url perfil %}"
+                 alt="Foto de perfil"
                  onerror="this.onerror=null; this.style.display='none'; document.getElementById('avatar-fallback').style.display='flex';"
                  style="width:100%; height:100%; object-fit:cover;">
             <div class="avatar-placeholder" id="avatar-fallback" style="display:none;">
@@ -950,7 +2149,7 @@
             </div>
           {% endif %}
         </div>
-        
+
         <h1 class="name">
           {% if perfil %}
             {{ perfil.nombres|default:"" }} {{ perfil.apellidos|default:"" }}
@@ -958,7 +2157,7 @@
             TU NOMBRE
           {% endif %}
         </h1>
-        
+
         <!-- ===== NUEVO: TEXTO "SOBRE MÍ" DEBAJO DEL NOMBRE ===== -->
         <div class="profile-description">
           {% if perfil and perfil.descripcionperfil %}
@@ -970,38 +2169,38 @@
       </div>
       {% endif %}
 
-      {% if config.mostrar_contacto %}
+      {% if config.mostrar_contacto and sections_config.datos_personales %}
       <div class="personal-info">
         <h3 class="section-title">Contacto</h3>
-        
+
         {% if perfil and perfil.numerocedula %}
         <div class="info-item">
           <div class="info-label">Identificación</div>
           <div class="info-value">{{ perfil.numerocedula }}</div>
         </div>
         {% endif %}
-        
+
         {% if perfil and perfil.telefonoconvencional %}
         <div class="info-item">
           <div class="info-label">Teléfono</div>
           <div class="info-value">{{ perfil.telefonoconvencional }}</div>
         </div>
         {% endif %}
-        
+
         {% if perfil and perfil.telefonofijo %}
         <div class="info-item">
           <div class="info-label">Teléfono fijo</div>
           <div class="info-value">{{ perfil.telefonofijo }}</div>
         </div>
         {% endif %}
-        
+
         {% if perfil and perfil.direcciondomiciliaria %}
         <div class="info-item">
           <div class="info-label">Dirección</div>
           <div class="info-value">{{ perfil.direcciondomiciliaria }}</div>
         </div>
         {% endif %}
-        
+
         {% if perfil and perfil.sitioweb %}
         <div class="info-item">
           <div class="info-label">Sitio web</div>
@@ -1013,19 +2212,20 @@
       </div>
       {% endif %}
 
+      {% if sections_config.datos_personales %}
       <div class="personal-info">
         <h3 class="section-title">Datos personales</h3>
-        
+
         <div class="info-item">
           <div class="info-label">Nacionalidad</div>
           <div class="info-value">{{ perfil.nacionalidad|default:"—" }}</div>
         </div>
-        
+
         <div class="info-item">
           <div class="info-label">Lugar de nacimiento</div>
           <div class="info-value">{{ perfil.lugarnacimiento|default:"—" }}</div>
         </div>
-        
+
         <div class="info-item">
           <div class="info-label">Fecha de nacimiento</div>
           <div class="info-value">
@@ -1036,33 +2236,34 @@
             {% endif %}
           </div>
         </div>
-        
+
         <div class="info-item">
           <div class="info-label">Sexo</div>
           <div class="info-value">{{ perfil.sexo|default:"—" }}</div>
         </div>
-        
+
         <div class="info-item">
           <div class="info-label">Estado civil</div>
           <div class="info-value">{{ perfil.estadocivil|default:"—" }}</div>
         </div>
-        
+
         <div class="info-item">
           <div class="info-label">Licencia</div>
           <div class="info-value">{{ perfil.licenciaconducir|default:"—" }}</div>
         </div>
       </div>
+      {% endif %}
     </aside>
 
     <main class="cv-content">
       <!-- ===== ELIMINADA: Sección "Sobre mí" del contenido principal ===== -->
-      
+
       {% obtener_config_visibilidad as config %}
-      
-      {% if config.mostrar_experiencia_laboral %}
-      <section class="content-section">
+
+      {% if config.mostrar_experiencia_laboral and sections_config.experiencia %}
+      <section class="content-section" data-section="experiencia">
         <h2 class="content-title">Experiencia</h2>
-        
+
         {% for e in experiencias %}
           <div class="timeline-item">
             <div class="timeline-year">
@@ -1072,7 +2273,7 @@
                 —
               {% endif %}
             </div>
-            
+
             <div class="timeline-content">
               <h3 class="timeline-title">{{ e.cargodesempenado|default:"Cargo" }}</h3>
               <div class="timeline-subtitle">
@@ -1089,18 +2290,28 @@
                   → {{ e.fechafingestion|date:"d/m/Y" }}
                 {% endif %}
               </div>
-              
+
               {% if e.descripcionfunciones %}
                 <p class="timeline-description">{{ e.descripcionfunciones }}</p>
               {% endif %}
-              
-              {% if e.rutacertificado %}
+
+              {% tiene_archivo e 'rutacertificado' as tiene_cert_exp %}
+              {% if tiene_cert_exp %}
                 <div class="certificate-actions">
                   <a class="btn btn-outline" href="{% azure_file_url e 'rutacertificado' %}" target="_blank" rel="noopener">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                      <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
                     Vista previa
                   </a>
-                  <a class="btn btn-primary" href="{% azure_file_url e 'rutacertificado' %}?download=1" rel="noopener">
-                    Descargar
+                  <a class="btn btn-primary" href="{% azure_file_url e 'rutacertificado' %}?download=1" download rel="noopener">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                      <polyline points="7 10 12 15 17 10"></polyline>
+                      <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    Descargar PDF
                   </a>
                 </div>
               {% endif %}
@@ -1112,10 +2323,10 @@
       </section>
       {% endif %}
 
-      {% if config.mostrar_cursos %}
-      <section class="content-section">
+      {% if config.mostrar_cursos and sections_config.cursos %}
+      <section class="content-section" data-section="cursos">
         <h2 class="content-title">Cursos realizados</h2>
-        
+
         {% for c in cursos %}
           <div class="timeline-item">
             <div class="timeline-year">
@@ -1125,7 +2336,7 @@
                 —
               {% endif %}
             </div>
-            
+
             <div class="timeline-content">
               <h3 class="timeline-title">{{ c.nombrecurso }}</h3>
               <div class="timeline-subtitle">
@@ -1140,18 +2351,28 @@
                   → {{ c.fechafin|date:"d/m/Y" }}
                 {% endif %}
               </div>
-              
+
               {% if c.descripcioncurso %}
                 <p class="timeline-description">{{ c.descripcioncurso }}</p>
               {% endif %}
-              
-              {% if c.rutacertificado %}
+
+              {% tiene_archivo c 'rutacertificado' as tiene_cert_curso %}
+              {% if tiene_cert_curso %}
                 <div class="certificate-actions">
                   <a class="btn btn-outline" href="{% azure_file_url c 'rutacertificado' %}" target="_blank" rel="noopener">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                      <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
                     Vista previa
                   </a>
-                  <a class="btn btn-primary" href="{% azure_file_url c 'rutacertificado' %}?download=1" rel="noopener">
-                    Descargar
+                  <a class="btn btn-primary" href="{% azure_file_url c 'rutacertificado' %}?download=1" download rel="noopener">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                      <polyline points="7 10 12 15 17 10"></polyline>
+                      <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    Descargar PDF
                   </a>
                 </div>
               {% endif %}
@@ -1163,10 +2384,10 @@
       </section>
       {% endif %}
 
-      {% if config.mostrar_reconocimientos %}
-      <section class="content-section">
+      {% if config.mostrar_reconocimientos and sections_config.reconocimientos %}
+      <section class="content-section" data-section="reconocimientos">
         <h2 class="content-title">Reconocimientos</h2>
-        
+
         {% for r in reconocimientos %}
           <div class="timeline-item">
             <div class="timeline-year">
@@ -1176,7 +2397,7 @@
                 —
               {% endif %}
             </div>
-            
+
             <div class="timeline-content">
               <h3 class="timeline-title">{{ r.descripcionreconocimiento|default:"Reconocimiento" }}</h3>
               <div class="timeline-subtitle">
@@ -1188,14 +2409,24 @@
                   • {{ r.fechareconocimiento|date:"d/m/Y" }}
                 {% endif %}
               </div>
-              
-              {% if r.rutacertificado %}
+
+              {% tiene_archivo r 'rutacertificado' as tiene_cert_rec %}
+              {% if tiene_cert_rec %}
                 <div class="certificate-actions">
                   <a class="btn btn-outline" href="{% azure_file_url r 'rutacertificado' %}" target="_blank" rel="noopener">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                      <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
                     Vista previa
                   </a>
-                  <a class="btn btn-primary" href="{% azure_file_url r 'rutacertificado' %}?download=1" rel="noopener">
-                    Descargar
+                  <a class="btn btn-primary" href="{% azure_file_url r 'rutacertificado' %}?download=1" download rel="noopener">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                      <polyline points="7 10 12 15 17 10"></polyline>
+                      <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    Descargar PDF
                   </a>
                 </div>
               {% endif %}
@@ -1207,15 +2438,15 @@
       </section>
       {% endif %}
 
-      {% if config.mostrar_productos_academicos or config.mostrar_productos_laborales %}
-      <section class="content-section">
+      {% if config.mostrar_productos_academicos and sections_config.productos_academicos or config.mostrar_productos_laborales and sections_config.productos_laborales %}
+      <section class="content-section" data-section="productos-academicos">
         <h2 class="content-title">Productos académicos y laborales</h2>
-        
+
         <div class="products-grid">
-          {% if config.mostrar_productos_academicos %}
+          {% if config.mostrar_productos_academicos and sections_config.productos_academicos %}
           <div class="product-column">
             <h3 class="product-column-title">Académicos</h3>
-            
+
             {% for p in prod_acad %}
               <div class="product-item">
                 <div class="skill-tag">{{ p.clasificador|default:"Recurso" }}</div>
@@ -1229,11 +2460,11 @@
             {% endfor %}
           </div>
           {% endif %}
-          
-          {% if config.mostrar_productos_laborales %}
+
+          {% if config.mostrar_productos_laborales and sections_config.productos_laborales %}
           <div class="product-column">
             <h3 class="product-column-title">Laborales</h3>
-            
+
             {% for p in prod_lab %}
               <div class="product-item">
                 <div class="skill-tag">
@@ -1257,27 +2488,18 @@
       </section>
       {% endif %}
 
-      {% if config.mostrar_venta_garage %}
+      {% if config.mostrar_venta_garage and sections_config.venta_garage %}
       <section class="content-section">
         <h2 class="content-title">Venta garage</h2>
-        
-        {% for g in garage %}
-          <div class="timeline-item">
-            <div class="timeline-year">{{ g.estadoproducto|default:"—" }}</div>
-            
-            <div class="timeline-content">
-              <h3 class="timeline-title">{{ g.nombreproducto|default:"Producto" }}</h3>
-              <div class="timeline-subtitle">
-                {{ g.descripcion|default:"" }}
-                {% if g.valordelbien %}
-                  • ${{ g.valordelbien }}
-                {% endif %}
-              </div>
-            </div>
-          </div>
-        {% empty %}
-          <div class="empty-state">No hay productos en venta.</div>
-        {% endfor %}
+
+        <a href="{% url 'garage' %}" class="btn btn-primary" style="margin-bottom: 30px; display: inline-flex; gap: 8px; align-items: center;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="9" cy="21" r="1"></circle>
+            <circle cx="20" cy="21" r="1"></circle>
+            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+          </svg>
+          Tienda
+        </a>
       </section>
       {% endif %}
     </main>
@@ -1607,6 +2829,203 @@ function soloNumerosYSlash(e) {
     const char = String.fromCharCode(e.keyCode || e.which);
     return /[\d/]/.test(char) || e.keyCode === 8 || e.keyCode === 46;
 }
+
+/* ===== FUNCIONES PARA MODAL DE IMPRESIÓN ===== */
+function openPrintModal() {
+    console.log('Opening print modal...');
+    const modal = document.getElementById('printModal');
+    if (modal) {
+        modal.style.display = 'flex';
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+        console.log('Print modal opened successfully');
+    } else {
+        console.error('Print modal not found!');
+    }
+}
+
+function updatePreview() {
+    const previewContainer = document.getElementById('printPreview');
+    if (!previewContainer) return;
+
+    // Obtener el CV completo
+    const cvContainer = document.querySelector('.cv-container');
+    if (!cvContainer) return;
+
+    // Obtener las secciones seleccionadas
+    const datosPersonales = document.getElementById('print-datos-personales')?.checked || false;
+    const sections = {
+        'experiencia': document.getElementById('print-experiencia')?.checked || false,
+        'cursos': document.getElementById('print-cursos')?.checked || false,
+        'reconocimientos': document.getElementById('print-reconocimientos')?.checked || false,
+        'productos-academicos': document.getElementById('print-productos-academicos')?.checked || false,
+        'productos-laborales': document.getElementById('print-productos-laborales')?.checked || false,
+        'venta-garage': document.getElementById('print-venta-garage')?.checked || false
+    };
+
+    // Clonar el CV
+    const cvClone = cvContainer.cloneNode(true);
+    
+    // Ocultar/mostrar sidebar según "Datos Personales"
+    const sidebar = cvClone.querySelector('.cv-sidebar');
+    if (sidebar) {
+        if (!datosPersonales) {
+            sidebar.style.display = 'none';
+            // Ajustar el grid para que el contenido ocupe todo el ancho
+            cvClone.style.gridTemplateColumns = '1fr';
+        } else {
+            sidebar.style.display = 'block';
+            cvClone.style.gridTemplateColumns = '350px 1fr';
+        }
+    }
+    
+    // Ocultar secciones no seleccionadas del contenido
+    const contentSections = cvClone.querySelectorAll('.cv-content [data-section]');
+    contentSections.forEach(section => {
+        const sectionType = section.getAttribute('data-section');
+        if (!sections[sectionType]) {
+            section.style.display = 'none';
+        } else {
+            section.style.display = 'block';
+        }
+    });
+
+    // Ocultar/mostrar sección de Venta Garage
+    const allContentSections = cvClone.querySelectorAll('.cv-content section.content-section');
+    allContentSections.forEach(section => {
+        const title = section.querySelector('h2.content-title');
+        if (title && (title.textContent.includes('Venta garage') || title.textContent.includes('Venta Garage'))) {
+            if (!sections['venta-garage']) {
+                section.style.display = 'none';
+            } else {
+                section.style.display = 'block';
+            }
+        }
+    });
+
+    // Aplicar estilos de impresión al clon
+    cvClone.style.transform = 'scale(0.55)';
+    cvClone.style.transformOrigin = 'top center';
+    cvClone.style.width = '181.8%';
+    cvClone.style.height = 'auto';
+    cvClone.style.margin = '0 auto';
+    cvClone.style.boxShadow = 'none';
+    cvClone.style.borderRadius = '0';
+
+    // Limpiar y agregar el clon
+    previewContainer.innerHTML = '';
+    previewContainer.appendChild(cvClone);
+}
+
+function closePrintModal() {
+    const modal = document.getElementById('printModal');
+    if (modal) {
+        modal.classList.remove('active');
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+        // Scroll suave hacia el CV
+        const cvContainer = document.querySelector('.cv-container');
+        if (cvContainer) {
+            cvContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }
+}
+
+function openPreview() {
+    // Obtener las selecciones actuales
+    const datosPersonales = document.getElementById('print-datos-personales').checked;
+    const sections = {
+        'datos-personales': datosPersonales,
+        'experiencia': document.getElementById('print-experiencia').checked,
+        'cursos': document.getElementById('print-cursos').checked,
+        'reconocimientos': document.getElementById('print-reconocimientos').checked,
+        'productos-academicos': document.getElementById('print-productos-academicos').checked,
+        'productos-laborales': document.getElementById('print-productos-laborales').checked,
+        'venta-garage': document.getElementById('print-venta-garage').checked
+    };
+
+    // Crear URL con parámetros
+    const params = new URLSearchParams();
+    params.set('preview', '1');
+    params.set('datos-personales', datosPersonales ? '1' : '0');
+    Object.keys(sections).forEach(key => {
+        if (key !== 'datos-personales') {
+            params.set(key, sections[key] ? '1' : '0');
+        }
+    });
+
+    // Abrir en nueva pestaña
+    const previewUrl = window.location.pathname + '?' + params.toString();
+    window.open(previewUrl, '_blank');
+}
+
+function doPrint() {
+    // Obtener los checkboxes
+    const datosPersonales = document.getElementById('print-datos-personales').checked;
+    const sections = {
+        'datos-personales': datosPersonales,
+        'experiencia': document.getElementById('print-experiencia').checked,
+        'cursos': document.getElementById('print-cursos').checked,
+        'reconocimientos': document.getElementById('print-reconocimientos').checked,
+        'productos-academicos': document.getElementById('print-productos-academicos').checked,
+        'productos-laborales': document.getElementById('print-productos-laborales').checked,
+        'venta-garage': document.getElementById('print-venta-garage').checked
+    };
+
+    // Crear URL con parámetros para descarga
+    const params = new URLSearchParams();
+    params.set('download', '1');
+    params.set('datos-personales', datosPersonales ? '1' : '0');
+    Object.keys(sections).forEach(key => {
+        if (key !== 'datos-personales') {
+            params.set(key, sections[key] ? '1' : '0');
+        }
+    });
+
+    // Crear enlace de descarga
+    const downloadUrl = window.location.pathname + '?' + params.toString();
+    const link = document.createElement('a');
+    link.href = downloadUrl;
+    link.download = 'CV_' + new Date().toISOString().split('T')[0] + '.pdf';
+    link.target = '_blank';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    // Cerrar el modal
+    closePrintModal();
+}
+
+// Cerrar modal al hacer clic fuera de él y ocultar al cargar
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('DOM loaded, initializing print modal...');
+    const modal = document.getElementById('printModal');
+    const printButton = document.getElementById('printButton');
+
+    if (modal) {
+        console.log('Print modal found, setting up...');
+        // Ocultar el modal al cargar la página
+        modal.style.display = 'none';
+
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closePrintModal();
+            }
+        });
+    } else {
+        console.error('Print modal not found during initialization!');
+    }
+
+    if (printButton) {
+        console.log('Print button found, adding click handler...');
+        printButton.addEventListener('click', (e) => {
+            console.log('Print button clicked via event listener');
+            openPrintModal();
+        });
+    } else {
+        console.error('Print button not found during initialization!');
+    }
+});
 </script>
 
 <style>

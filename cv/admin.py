@@ -292,9 +292,22 @@ class ProductosLaboralesAdmin(admin.ModelAdmin):
 # ==================== ADMIN: VentaGarage ====================
 @admin.register(VentaGarage)
 class VentaGarageAdmin(admin.ModelAdmin):
-    list_display = ('nombreproducto', 'estadoproducto', 'valordelbien')
+    list_display = ('nombreproducto', 'estadoproducto', 'disponible', 'valordelbien')
     search_fields = ('nombreproducto', 'estadoproducto')
-    list_filter = ('activarparaqueseveaenfront',)
+    list_filter = ('disponible', 'activarparaqueseveaenfront')
+    fieldsets = (
+        ('Información Básica', {
+            'fields': ('nombreproducto', 'descripcion', 'estadoproducto', 'valordelbien', 'disponible')
+        }),
+        ('Fotos del Producto', {
+            'fields': ('foto', 'foto2', 'foto3'),
+            'description': 'Agregue hasta 3 fotos del producto. Las fotos se mostrarán en un carrusel.'
+        }),
+        ('Configuración', {
+            'fields': ('idperfilconqueestaactivo', 'activarparaqueseveaenfront'),
+            'classes': ('collapse',)
+        }),
+    )
 
 
 # ==================== ADMIN: ConfiguracionVisibilidad ====================

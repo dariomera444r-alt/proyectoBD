@@ -170,4 +170,55 @@ class ProductosLaboralesForm(forms.ModelForm):
 class VentaGarageForm(forms.ModelForm):
     class Meta:
         model = VentaGarage
-        fields = "__all__"
+        fields = ['nombreproducto', 'descripcion', 'estadoproducto', 'valordelbien', 'disponible', 'foto', 'foto2', 'foto3', 'activarparaqueseveaenfront']
+        widgets = {
+            'nombreproducto': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Nombre del producto',
+                'required': True
+            }),
+            'descripcion': forms.Textarea(attrs={
+                'class': 'form-control',
+                'placeholder': 'Descripción del producto',
+                'rows': 4
+            }),
+            'estadoproducto': forms.Select(attrs={
+                'class': 'form-control',
+            }, choices=[
+                ('', 'Seleccionar estado...'),
+                ('Disponible', 'Disponible'),
+                ('Vendido', 'Vendido'),
+                ('Reservado', 'Reservado'),
+            ]),
+            'valordelbien': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'placeholder': '0.01',
+                'step': '0.01',
+                'min': '0.01'
+            }),
+            'disponible': forms.CheckboxInput(attrs={
+                'class': 'form-check-input'
+            }),
+            'foto': forms.FileInput(attrs={
+                'class': 'form-control',
+                'accept': 'image/*'
+            }),
+            'foto2': forms.FileInput(attrs={
+                'class': 'form-control',
+                'accept': 'image/*'
+            }),
+            'foto3': forms.FileInput(attrs={
+                'class': 'form-control',
+                'accept': 'image/*'
+            }),
+            'activarparaqueseveaenfront': forms.CheckboxInput(attrs={
+                'class': 'form-check-input'
+            })
+        }
+    
+    def clean_valordelbien(self):
+        """Validar que el valor sea mayor que 0"""
+        valor = self.cleaned_data.get('valordelbien')
+        if valor is not None and valor <= 0:
+            raise forms.ValidationError('El precio debe ser mayor que 0.')
+        return valor
