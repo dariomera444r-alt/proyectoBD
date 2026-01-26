@@ -18,6 +18,7 @@ SECRET_KEY = os.environ.get("SECRET_KEY", "django-insecure-dev-key-change-in-pro
 DEBUG = os.environ.get("DEBUG", "False") == "True"
 
 # Hosts
+ALLOWED_HOSTS = ['vida.onrender.com', 'localhost', '127.0.0.1']
 ALLOWED_HOSTS = [h.strip() for h in os.environ.get("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",") if h.strip()]
 
 RENDER_EXTERNAL_HOSTNAME = os.environ.get("RENDER_EXTERNAL_HOSTNAME")
@@ -77,7 +78,7 @@ WSGI_APPLICATION = "config.wsgi.application"
 # Database
 DATABASES = {
     "default": dj_database_url.config(
-        default="sqlite:///db.sqlite3",
+        default="postgresql://proyectodbd_user:qEeaZMIQZCPRWnkAFfdVu9gx8jLVby0q@dpg-d5rfml94tr6s73e203cg-a.oregon-postgres.render.com/proyectodbd",
         conn_max_age=600,
         conn_health_checks=True,
     )
