@@ -2021,7 +2021,11 @@
     {% obtener_config_visibilidad as config %}
     {% if config.mostrar_cv_descargable %}
       {% if perfil and perfil.cv_pdf %}
+<<<<<<< HEAD
         <a class="btn btn-secondary" href="javascript:void(0)" onclick="abrirVisor('{% azure_file_url perfil 'cv_pdf' %}', 'Ver CV')" rel="noopener" title="Ver CV">
+=======
+        <a class="btn btn-secondary" href="{% azure_file_url perfil 'cv_pdf' %}" target="_blank" rel="noopener" title="Ver CV en nueva pestaña">
+>>>>>>> 81a801e0851b904edbf34ee51abd2c5ab845f1a1
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
             <circle cx="12" cy="12" r="3"></circle>

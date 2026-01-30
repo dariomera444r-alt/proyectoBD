@@ -1,10 +1,17 @@
 asgiref==3.11.0
 azure-core==1.38.0
 azure-storage-blob==12.19.0
+<<<<<<< HEAD
 certifi==2026.1.4
 cffi==2.0.0
 charset-normalizer==3.4.4
 cryptography==46.0.4
+=======
+python-dotenv==1.0.0
+whitenoise==6.6.0
+gunicorn==21.2.0
+psycopg2-binary==2.9.11
+>>>>>>> 81a801e0851b904edbf34ee51abd2c5ab845f1a1
 dj-database-url==2.1.0
 Django>=5.0.0
 django-storages==1.14.2

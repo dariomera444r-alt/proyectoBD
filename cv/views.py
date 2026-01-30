@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 #cv/views.py
+=======
+>>>>>>> 81a801e0851b904edbf34ee51abd2c5ab845f1a1
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, Http404, FileResponse, JsonResponse
 from django.views.decorators.cache import cache_control
@@ -405,14 +408,23 @@ def serve_protected_file(request, file_type, model_id, field_name):
 
         response = HttpResponse(content, content_type=content_type)
         response["Content-Disposition"] = f'{disposition}; filename="{filename}"'
+<<<<<<< HEAD
 
+=======
+        
+        # No cachear archivos de garage para permitir actualizaciones de fotos
+>>>>>>> 81a801e0851b904edbf34ee51abd2c5ab845f1a1
         if file_type == "garage":
             response["Cache-Control"] = "no-cache, no-store, must-revalidate"
             response["Pragma"] = "no-cache"
             response["Expires"] = "0"
         else:
             response["Cache-Control"] = "public, max-age=3600"
+<<<<<<< HEAD
 
+=======
+        
+>>>>>>> 81a801e0851b904edbf34ee51abd2c5ab845f1a1
         return response
 
     except FileNotFoundError:

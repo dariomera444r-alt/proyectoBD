@@ -203,9 +203,15 @@ class VentaGarageForm(forms.ModelForm):
             ]),
             'valordelbien': forms.NumberInput(attrs={
                 'class': 'form-control',
+<<<<<<< HEAD
                 'placeholder': '1.00',
                 'step': '0.01',
                 'min': '1'
+=======
+                'placeholder': '0.01',
+                'step': '0.01',
+                'min': '0.01'
+>>>>>>> 81a801e0851b904edbf34ee51abd2c5ab845f1a1
             }),
             'disponible': forms.CheckboxInput(attrs={
                 'class': 'form-check-input'
@@ -228,8 +234,15 @@ class VentaGarageForm(forms.ModelForm):
         }
     
     def clean_valordelbien(self):
+<<<<<<< HEAD
         """Validar que el valor sea mayor o igual a 1"""
         valor = self.cleaned_data.get('valordelbien')
         if valor is not None and valor < 1:
             raise forms.ValidationError('El precio debe ser mayor o igual a 1.')
+=======
+        """Validar que el valor sea mayor que 0"""
+        valor = self.cleaned_data.get('valordelbien')
+        if valor is not None and valor <= 0:
+            raise forms.ValidationError('El precio debe ser mayor que 0.')
+>>>>>>> 81a801e0851b904edbf34ee51abd2c5ab845f1a1
         return valor

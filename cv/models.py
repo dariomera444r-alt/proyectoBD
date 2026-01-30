@@ -5,7 +5,10 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 81a801e0851b904edbf34ee51abd2c5ab845f1a1
 # ==================== VALIDADORES REUTILIZABLES ====================
 
 def validar_no_fecha_futura(value):
@@ -14,13 +17,21 @@ def validar_no_fecha_futura(value):
         raise ValidationError("🚫 ERROR: No se permiten fechas futuras.")
     return value
 
+
 def validar_fecha_inicio_anterior_fin(fecha_inicio, fecha_fin):
     """🚫 Bloqueante: Valida que fecha_inicio < fecha_fin"""
     if fecha_inicio and fecha_fin and fecha_inicio > fecha_fin:
         raise ValidationError(
+<<<<<<< HEAD
             f"🚫 ERROR: La fecha de inicio ({fecha_inicio}) debe ser anterior a la fecha de fin ({fecha_fin})"
+=======
+            "🚫 ERROR: La fecha de inicio ({}) debe ser anterior a la fecha de fin ({})".format(
+                fecha_inicio, fecha_fin
+            )
+>>>>>>> 81a801e0851b904edbf34ee51abd2c5ab845f1a1
         )
     return True
+
 
 def validar_horas_no_negativas(value):
     """🚫 Bloqueante: Valida que las horas sean >= 1"""
@@ -72,6 +83,7 @@ class DatosPersonales(models.Model):
         errores = {}
         hoy = timezone.now().date()
 
+<<<<<<< HEAD
         # Validación de la fecha de nacimiento
         if self.fechanacimiento:
             if self.fechanacimiento > hoy:
@@ -106,6 +118,23 @@ class DatosPersonales(models.Model):
                 errores["cv_pdf"] = "🚫 ERROR: Solo se permiten archivos PDF."
             elif self.cv_pdf.size > 10 * 1024 * 1024:  # Limitar el tamaño a 10MB
                 errores["cv_pdf"] = "🚫 ERROR: El archivo PDF no puede exceder los 10MB."
+=======
+        if self.fechanacimiento:
+            if self.fechanacimiento > hoy:
+                errores["fechanacimiento"] = (
+                    "🚫 ERROR: La fecha de nacimiento no puede ser futura."
+                )
+            elif self.fechanacimiento.year < 1900:
+                errores["fechanacimiento"] = (
+                    "🚫 ERROR: Año mínimo permitido: 1900."
+                )
+            else:
+                edad_minima = hoy.replace(year=hoy.year - 12)
+                if self.fechanacimiento > edad_minima:
+                    errores["fechanacimiento"] = (
+                        "🚫 ERROR: La edad mínima debe ser 12 años."
+                    )
+>>>>>>> 81a801e0851b904edbf34ee51abd2c5ab845f1a1
 
         if errores:
             raise ValidationError(errores)
@@ -423,6 +452,7 @@ class VentaGarage(models.Model):
         verbose_name_plural = "Productos en Venta"
         ordering = ["-idventagarage"]
 
+<<<<<<< HEAD
     def clean(self):
         super().clean()
         errores = {}
@@ -431,6 +461,8 @@ class VentaGarage(models.Model):
         if errores:
             raise ValidationError(errores)
 
+=======
+>>>>>>> 81a801e0851b904edbf34ee51abd2c5ab845f1a1
     def get_fotos(self):
         """Retorna lista de fotos disponibles"""
         fotos = []
