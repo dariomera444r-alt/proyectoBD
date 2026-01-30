@@ -360,12 +360,7 @@ class VentaGarageAdmin(admin.ModelAdmin):
     list_display = ('nombreproducto', 'estadoproducto', 'disponible', 'valordelbien')
     search_fields = ('nombreproducto', 'estadoproducto')
     list_filter = ('disponible', 'activarparaqueseveaenfront')
-<<<<<<< HEAD
-    
-fieldsets = (
-=======
     fieldsets = (
->>>>>>> 81a801e0851b904edbf34ee51abd2c5ab845f1a1
         ('Información Básica', {
             'fields': ('nombreproducto', 'descripcion', 'estadoproducto', 'valordelbien', 'disponible')
         }),
