@@ -19,6 +19,8 @@ def azure_file_url(obj, field_name: str):
         file_type = "curso"
     elif model_name == "reconocimientos":
         file_type = "reconocimiento"
+    elif model_name == "ventagarage":
+        file_type = "garage"
     else:
         return ""
 
@@ -31,3 +33,34 @@ def azure_avatar_url(perfil):
     if not perfil:
         return ""
     return reverse("serve_protected_file", args=["perfil", perfil.pk, "foto"])
+
+
+@register.simple_tag
+def tiene_archivo(obj, field_name: str):
+    """
+    Verifica si un objeto tiene un archivo cargado en el campo especificado.
+    Retorna True si existe el archivo, False en caso contrario.
+    """
+    if not obj:
+        return False
+    
+    try:
+        field = getattr(obj, field_name, None)
+        if not field:
+            return False
+
+        if isinstance(field, str):
+            return bool(field.strip())
+
+        name = getattr(field, "name", "") or ""
+        if name:
+            return True
+
+        try:
+            url = getattr(field, "url", "") or ""
+        except Exception:
+            url = ""
+
+        return bool(url)
+    except Exception:
+        return False

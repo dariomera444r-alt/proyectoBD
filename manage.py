@@ -3,6 +3,9 @@
 import os
 import sys
 
+# Aplicar parche de compatibilidad Python 3.14 ANTES de cualquier importación de Django
+import config.python314_patch
+
 def main():
     """Run administrative tasks."""
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')

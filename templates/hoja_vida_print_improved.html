@@ -1,0 +1,372 @@
+{% load static %}
+{% load azure_tags %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CV · Vista previa profesional</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #ffffff;
+      --paper: #ffffff;
+      --ink: #0f172a;
+      --muted: #475569;
+      --border: #e2e8f0;
+      --brand: #1e40af;      /* Azul principal */
+      --brand-2: #3b82f6;     /* Azul complementario */
+      --brand-3: #0ea5e9;     /* Azul acento suave */
+      --chip-bg: #eef2ff;     /* Fondo chip */
+      --chip-text: #4338ca;   /* Texto chip */
+      --shadow: 0 10px 30px rgba(2, 6, 23, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+
+    body {
+      background: #f5f7fb;
+      color: var(--ink);
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* Panel lateral de opciones (flotante) */
+    .toolbar {
+      position: fixed;
+      top: 20px; right: 20px;
+      width: 300px;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      display: flex; flex-direction: column; gap: 12px;
+      z-index: 1000; box-shadow: var(--shadow);
+    }
+    .toolbar-title { font-weight: 900; color: var(--brand-2); font-size: 14px; letter-spacing: .3px; }
+    .options { display: flex; flex-direction: column; gap: 8px; max-height: 48vh; overflow: auto; padding-right: 4px; }
+    .option { display: flex; align-items: center; gap: 10px; background: #f8fbff; border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; }
+    .toolbar .btn { background: linear-gradient(135deg, var(--brand-2), var(--brand)); color: #fff; border: none; border-radius: 10px; padding: 10px 12px; font-weight: 800; cursor: pointer; box-shadow: 0 12px 24px rgba(30,64,175,.18); }
+    .toolbar .btn.secondary { background: #0f172a; }
+
+    /* Lienzo principal */
+    .container { max-width: 1100px; margin: 28px auto; padding: 28px; }
+
+    .sheet {
+      display: grid; grid-template-columns: 340px 1fr; gap: 24px;
+      background: var(--paper); border: 1px solid var(--border); border-radius: 18px;
+      box-shadow: var(--shadow); padding: 28px;
+    }
+
+    /* Cabecera superior a todo lo ancho */
+    .header {
+      grid-column: 1 / -1;
+      display: grid; grid-template-columns: 160px 1fr; gap: 22px; align-items: center;
+      border-bottom: 3px solid var(--brand-2);
+      padding-bottom: 18px; margin-bottom: 10px;
+      background: linear-gradient(180deg, rgba(30,64,175,.06), rgba(30,64,175,0));
+      border-radius: 10px 10px 0 0;
+    }
+    .avatar { width: 160px; height: 160px; border-radius: 16px; overflow: hidden; border: 3px solid var(--brand-2); background: #e2e8f0; }
+    .avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .title-block { display: flex; flex-direction: column; gap: 6px; }
+    .name { margin: 0; font-size: 36px; font-weight: 900; letter-spacing: .3px; color: var(--brand); }
+    .subtitle { color: var(--muted); font-weight: 600; }
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+    .chip { background: var(--chip-bg); color: var(--chip-text); padding: 6px 10px; font-weight: 700; border-radius: 999px; border: 1px solid #e0e7ff; font-size: 12px; }
+
+    /* Sidebar (columna izquierda) */
+    .sidebar { display: grid; gap: 16px; }
+    .side-card { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 14px; }
+    .section-title { display: flex; align-items: center; gap: 10px; color: var(--brand); font-weight: 900; letter-spacing: .3px; margin: 0 0 10px 0; font-size: 16px; }
+    .section-title::before { content: ""; width: 10px; height: 10px; border-radius: 50%; background: var(--brand-2); box-shadow: 0 0 0 6px rgba(59,130,246,.12); }
+
+    .info-grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
+    .info-item { display: grid; gap: 2px; }
+    .info-label { font-size: 11px; color: var(--muted); font-weight: 800; letter-spacing: .4px; text-transform: uppercase; }
+    .info-value { font-weight: 700; }
+
+    /* Contenido principal (columna derecha) */
+    .content { display: grid; gap: 18px; }
+
+    .block { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
+
+    /* Timeline profesional */
+    .timeline { position: relative; display: grid; gap: 14px; }
+    .timeline::before { content: ""; position: absolute; left: 10px; top: 0; bottom: 0; width: 2px; background: linear-gradient(var(--brand-2), rgba(59,130,246,0)); border-radius: 8px; }
+    .tl { display: grid; grid-template-columns: 24px 1fr; gap: 12px; align-items: start; }
+    .tl-dot { width: 12px; height: 12px; border-radius: 50%; background: var(--brand-2); margin-top: 6px; box-shadow: 0 0 0 6px rgba(59,130,246,.12); }
+    .tl-body { background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; }
+    .tl-title { font-weight: 900; }
+    .tl-meta { color: var(--muted); font-size: 12.5px; margin-top: 2px; }
+    .tl-desc { margin-top: 6px; }
+
+    /* Badges y chips en contenido */
+    .badge { display: inline-block; background: #f1f5ff; color: var(--brand); padding: 4px 8px; border-radius: 6px; font-size: 12px; border: 1px solid #e5edff; font-weight: 700; }
+
+    /* Impresión */
+    @media print {
+      @page { size: A4; margin: 1.2cm 1.4cm; }
+      * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; }
+      html, body { background: #fff !important; margin: 0 !important; padding: 0 !important; }
+      .toolbar { display: none !important; }
+      .container { padding: 0 !important; margin: 0 !important; max-width: 100% !important; }
+
+      /* Mantener layout en dos columnas y evitar reflujo */
+      .sheet {
+        box-shadow: none !important; border: none !important; border-radius: 0 !important;
+        padding: 0 !important; gap: 12px !important;
+        display: grid !important; grid-template-columns: 32% 68% !important;
+        align-items: start !important;
+      }
+
+      /* Evitar cortes y reordenamientos */
+      .header,
+      .sidebar,
+      .content,
+      .block,
+      .side-card,
+      .timeline,
+      .tl,
+      .tl-body,
+      .info-grid,
+      .info-item { page-break-inside: avoid !important; break-inside: avoid !important; }
+
+      /* Afinar elementos de timeline para impresión */
+      .timeline::before { left: 6px !important; }
+      .tl-dot { box-shadow: 0 0 0 4px rgba(59,130,246,.12) !important; }
+
+      /* Tipografías y colores en impresión */
+      .name { color: #1e40af !important; }
+      .section-title { color: #1e40af !important; }
+      .badge { border-color: #c7d2fe !important; }
+
+      /* Evitar salto de página entre cabecera y contenido */
+      .header { page-break-after: avoid !important; break-after: avoid-page !important; margin-bottom: 6px !important; }
+      .header *, .avatar, .title-block { page-break-inside: avoid !important; break-inside: avoid !important; }
+
+      /* Reducir ligeramente el avatar en impresión para ganar espacio vertical */
+      .avatar { width: 120px !important; height: 120px !important; border-width: 2px !important; }
+
+      /* Compactar verticalmente para evitar espacios en blanco al inicio */
+      .sheet { row-gap: 10px !important; }
+      .sidebar, .content { margin-top: 0 !important; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Panel de selección de secciones -->
+  <div class="toolbar">
+    <div class="toolbar-title">Secciones a imprimir</div>
+    <div class="options">
+      <label class="option"><input type="checkbox" id="opt-datos" checked /> <span>Datos personales</span></label>
+      <label class="option"><input type="checkbox" id="opt-experiencia" {% if sections_config.experiencia %}checked{% endif %}/> <span>Experiencia</span></label>
+      <label class="option"><input type="checkbox" id="opt-cursos" {% if sections_config.cursos %}checked{% endif %}/> <span>Cursos</span></label>
+      <label class="option"><input type="checkbox" id="opt-reconocimientos" {% if sections_config.reconocimientos %}checked{% endif %}/> <span>Reconocimientos</span></label>
+      <label class="option"><input type="checkbox" id="opt-prod-acad" {% if sections_config.productos_academicos %}checked{% endif %}/> <span>Productos académicos</span></label>
+      <label class="option"><input type="checkbox" id="opt-prod-lab" {% if sections_config.productos_laborales %}checked{% endif %}/> <span>Productos laborales</span></label>
+      <label class="option"><input type="checkbox" id="opt-garage" {% if sections_config.venta_garage %}checked{% endif %}/> <span>Venta garage</span></label>
+    </div>
+    <button class="btn" onclick="window.print()">Imprimir</button>
+    <button class="btn secondary" onclick="window.close()">Cerrar</button>
+  </div>
+
+  <!-- Documento -->
+  <div class="container">
+    <div class="sheet">
+      <div class="header">
+        <div class="avatar">
+          {% if perfil and perfil.foto %}<img src="{% azure_avatar_url perfil %}" alt="Foto" />{% endif %}
+        </div>
+        <div class="title-block">
+          <h1 class="name">{{ perfil.nombres|default:"" }} {{ perfil.apellidos|default:"" }}</h1>
+          {% if perfil.descripcionperfil %}
+            <div class="subtitle">{{ perfil.descripcionperfil }}</div>
+          {% endif %}
+          <div class="chips">
+            {% if perfil.nacionalidad %}<span class="chip">{{ perfil.nacionalidad }}</span>{% endif %}
+            {% if perfil.sitioweb %}<span class="chip">{{ perfil.sitioweb }}</span>{% endif %}
+          </div>
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <section id="sec-datos" class="side-card">
+          <h3 class="section-title">Datos personales</h3>
+          <div class="info-grid">
+            <div class="info-item"><div class="info-label">Nacionalidad</div><div class="info-value">{{ perfil.nacionalidad|default:"—" }}</div></div>
+            <div class="info-item"><div class="info-label">Lugar de nacimiento</div><div class="info-value">{{ perfil.lugarnacimiento|default:"—" }}</div></div>
+            <div class="info-item"><div class="info-label">Fecha de nacimiento</div><div class="info-value">{% if perfil.fechanacimiento %}{{ perfil.fechanacimiento|date:"d/m/Y" }}{% else %}—{% endif %}</div></div>
+            <div class="info-item"><div class="info-label">Estado civil</div><div class="info-value">{{ perfil.estadocivil|default:"—" }}</div></div>
+            <div class="info-item"><div class="info-label">Sexo</div><div class="info-value">{{ perfil.sexo|default:"—" }}</div></div>
+            <div class="info-item"><div class="info-label">Licencia</div><div class="info-value">{{ perfil.licenciaconducir|default:"—" }}</div></div>
+          </div>
+        </section>
+
+        <section class="side-card">
+          <h3 class="section-title">Contacto</h3>
+          <div class="info-grid">
+            <div class="info-item"><div class="info-label">Identificación</div><div class="info-value">{{ perfil.numerocedula|default:"—" }}</div></div>
+            <div class="info-item"><div class="info-label">Teléfono</div><div class="info-value">{{ perfil.telefonoconvencional|default:"—" }}</div></div>
+            <div class="info-item"><div class="info-label">Teléfono fijo</div><div class="info-value">{{ perfil.telefonofijo|default:"—" }}</div></div>
+            <div class="info-item"><div class="info-label">Dirección</div><div class="info-value">{{ perfil.direcciondomiciliaria|default:"—" }}</div></div>
+            <div class="info-item"><div class="info-label">Sitio web</div><div class="info-value">{{ perfil.sitioweb|default:"—" }}</div></div>
+          </div>
+        </section>
+      </aside>
+
+      <!-- Contenido -->
+      <main class="content">
+        <section id="sec-experiencia" class="block">
+          <h3 class="section-title">Experiencia</h3>
+          <div class="timeline">
+            {% for e in experiencias %}
+              <div class="tl">
+                <div class="tl-dot"></div>
+                <div class="tl-body">
+                  <div class="tl-title">{{ e.cargodesempenado|default:"" }} <span class="muted">— {{ e.nombrempresa|default:"" }}</span></div>
+                  <div class="tl-meta">
+                    {% if e.fechainiciogestion %}{{ e.fechainiciogestion|date:"d/m/Y" }}{% endif %}
+                    {% if e.fechafingestion %} → {{ e.fechafingestion|date:"d/m/Y" }}{% endif %}
+                    {% if e.lugarempresa %} • {{ e.lugarempresa }}{% endif %}
+                  </div>
+                  {% if e.descripcionfunciones %}<div class="tl-desc">{{ e.descripcionfunciones }}</div>{% endif %}
+                </div>
+              </div>
+            {% empty %}
+              <div class="muted">No hay experiencia para mostrar.</div>
+            {% endfor %}
+          </div>
+        </section>
+
+        <section id="sec-cursos" class="block">
+          <h3 class="section-title">Cursos</h3>
+          <div class="timeline">
+            {% for c in cursos %}
+              <div class="tl">
+                <div class="tl-dot"></div>
+                <div class="tl-body">
+                  <div class="tl-title">{{ c.nombrecurso }}</div>
+                  <div class="tl-meta">
+                    {{ c.entidadpatrocinadora|default:"" }}
+                    {% if c.totalhoras %} • <span class="badge">{{ c.totalhoras }} h</span>{% endif %}
+                    {% if c.fechainicio %} • {{ c.fechainicio|date:"d/m/Y" }}{% endif %}
+                    {% if c.fechafin %} → {{ c.fechafin|date:"d/m/Y" }}{% endif %}
+                  </div>
+                  {% if c.descripcioncurso %}<div class="tl-desc">{{ c.descripcioncurso }}</div>{% endif %}
+                </div>
+              </div>
+            {% empty %}
+              <div class="muted">No hay cursos para mostrar.</div>
+            {% endfor %}
+          </div>
+        </section>
+
+        <section id="sec-reconocimientos" class="block">
+          <h3 class="section-title">Reconocimientos</h3>
+          <div class="timeline">
+            {% for r in reconocimientos %}
+              <div class="tl">
+                <div class="tl-dot"></div>
+                <div class="tl-body">
+                  <div class="tl-title">{{ r.descripcionreconocimiento|default:"" }}</div>
+                  <div class="tl-meta">
+                    {% if r.entidadpatrocinadora %}{{ r.entidadpatrocinadora }} • {% endif %}
+                    {% if r.fechareconocimiento %}{{ r.fechareconocimiento|date:"d/m/Y" }}{% endif %}
+                    {% if r.tiporeconocimiento %} • {{ r.tiporeconocimiento }}{% endif %}
+                  </div>
+                </div>
+              </div>
+            {% empty %}
+              <div class="muted">No hay reconocimientos para mostrar.</div>
+            {% endfor %}
+          </div>
+        </section>
+
+        <section id="sec-prod-acad" class="block">
+          <h3 class="section-title">Productos académicos</h3>
+          <div class="timeline">
+            {% for p in prod_acad %}
+              <div class="tl">
+                <div class="tl-dot"></div>
+                <div class="tl-body">
+                  <div class="tl-title">{{ p.nombrerecurso|default:"" }}</div>
+                  <div class="tl-meta">{{ p.clasificador|default:"" }}</div>
+                  {% if p.descripcion %}<div class="tl-desc">{{ p.descripcion }}</div>{% endif %}
+                </div>
+              </div>
+            {% empty %}
+              <div class="muted">No hay productos académicos para mostrar.</div>
+            {% endfor %}
+          </div>
+        </section>
+
+        <section id="sec-prod-lab" class="block">
+          <h3 class="section-title">Productos laborales</h3>
+          <div class="timeline">
+            {% for p in prod_lab %}
+              <div class="tl">
+                <div class="tl-dot"></div>
+                <div class="tl-body">
+                  <div class="tl-title">{{ p.nombreproducto|default:"" }}</div>
+                  <div class="tl-meta">{% if p.fechaproducto %}{{ p.fechaproducto|date:"d/m/Y" }}{% endif %}</div>
+                  {% if p.descripcion %}<div class="tl-desc">{{ p.descripcion }}</div>{% endif %}
+                </div>
+              </div>
+            {% empty %}
+              <div class="muted">No hay productos laborales para mostrar.</div>
+            {% endfor %}
+          </div>
+        </section>
+
+        <section id="sec-garage" class="block">
+          <h3 class="section-title">Venta garage</h3>
+          <div class="tl-body">
+            <div class="tl-desc muted">Para detalles y fotos visite la sección Garage en el sitio.</div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    // Toggle de secciones
+    const map = [
+      { cb: 'opt-datos', sec: 'sec-datos' },
+      { cb: 'opt-experiencia', sec: 'sec-experiencia' },
+      { cb: 'opt-cursos', sec: 'sec-cursos' },
+      { cb: 'opt-reconocimientos', sec: 'sec-reconocimientos' },
+      { cb: 'opt-prod-acad', sec: 'sec-prod-acad' },
+      { cb: 'opt-prod-lab', sec: 'sec-prod-lab' },
+      { cb: 'opt-garage', sec: 'sec-garage' },
+    ];
+    function apply() {
+      map.forEach(({ cb, sec }) => {
+        const c = document.getElementById(cb);
+        const s = document.getElementById(sec);
+        if (!c || !s) return;
+        s.style.display = c.checked ? '' : 'none';
+      });
+    }
+    document.addEventListener('change', (e) => { if (e.target.matches('input[type="checkbox"]')) apply(); });
+    (function init() {
+      const initial = {
+        'opt-datos': {{ sections_config.datos_personales|yesno:"true,false" }},
+        'opt-experiencia': {{ sections_config.experiencia|yesno:"true,false" }},
+        'opt-cursos': {{ sections_config.cursos|yesno:"true,false" }},
+        'opt-reconocimientos': {{ sections_config.reconocimientos|yesno:"true,false" }},
+        'opt-prod-acad': {{ sections_config.productos_academicos|yesno:"true,false" }},
+        'opt-prod-lab': {{ sections_config.productos_laborales|yesno:"true,false" }},
+        'opt-garage': {{ sections_config.venta_garage|yesno:"true,false" }},
+      };
+      Object.entries(initial).forEach(([id, val]) => { const el = document.getElementById(id); if (el) el.checked = !!val; });
+      apply();
+    })();
+  </script>
+</body>
+</html>

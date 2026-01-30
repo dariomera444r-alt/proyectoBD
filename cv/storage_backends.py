@@ -20,6 +20,17 @@ class AzureMediaStorage(AzureStorage):
 
     def url(self, name):
         return name
+    
+    def _save(self, name, content):
+        try:
+            return super()._save(name, content)
+        except Exception as e:
+            print(f"❌ Error guardando archivo en Azure: {e}")
+            # Si falla Azure, guardar localmente temporalmente
+            import os
+            from django.core.files.storage import default_storage
+            local_name = f"azure_fallback_{name}"
+            return default_storage.save(local_name, content)
 
 
 class AzureFileProxy:

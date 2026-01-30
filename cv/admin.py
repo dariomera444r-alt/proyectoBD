@@ -1,7 +1,7 @@
 # cv/admin.py - VALIDACIÓN COMPLETA Y BLOQUEANTE EN TODAS LAS TABLAS
 from django.contrib import admin
 from django import forms
-from django.db import models
+from django.db import models, transaction
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 from django.utils.safestring import mark_safe
@@ -34,6 +34,7 @@ class DatosPersonalesAdmin(admin.ModelAdmin):
     search_fields = ('nombres', 'apellidos', 'numerocedula')
     list_filter = ('perfilactivo',)
     
+    
     formfield_overrides = {
         models.DateField: {'widget': FechaInputWidget()},
     }
@@ -52,7 +53,7 @@ class DatosPersonalesAdmin(admin.ModelAdmin):
             'description': mark_safe(
                 '<div style="background-color: #ffe6e6; border: 2px solid red; padding: 10px; border-radius: 5px; color: #000;">'
                 '<strong>🚫 IMPORTANTE:</strong> La fecha no puede ser futura, y la edad mínima es 18 años.<br>'
-                'Rango válido: últimos 120 años (máximo realista)<br>'
+                'Rango válido: últimos 80 años (máximo realista)<br>'
                 'Formato: DD/MM/YYYY'
                 '</div>'
             )
@@ -63,12 +64,13 @@ class DatosPersonalesAdmin(admin.ModelAdmin):
         ('Contacto', {
             'fields': ('telefonoconvencional', 'telefonofijo', 'direcciontrabajo', 'direcciondomiciliaria')
         }),
-        ('Otros', {
-            'fields': ('sitioweb', 'foto', 'cv_pdf')
+        ('Multimedia', {
+            'fields': ('foto', 'cv_pdf', 'sitioweb'),
+            'description': 'Suba su foto de perfil (imagen) y su CV en PDF.'
         }),
     )
 
-    def save_model(self, request, obj, form, change):
+def save_model(self, request, obj, form, change):
         """Bloquea el guardado si hay validaciones fallidas"""
         try:
             obj.full_clean()
@@ -79,6 +81,14 @@ class DatosPersonalesAdmin(admin.ModelAdmin):
                 for err_msg in error:
                     messages.error(request, f'{field}: {err_msg}')
             raise
+        except Exception as e:
+            from django.contrib import messages
+            error_msg = str(e)
+            if 'AuthenticationFailed' in error_msg or 'ClientAuthenticationError' in error_msg:
+                messages.error(request, '❌ Error de autenticación con Azure Storage. Verifique las credenciales.')
+            else:
+                messages.error(request, f'❌ Error al guardar: {error_msg}')
+            raise
 
 # ==================== ADMIN: ExperienciaLaboral ====================
 @admin.register(ExperienciaLaboral)
@@ -86,6 +96,7 @@ class ExperienciaLaboralAdmin(admin.ModelAdmin):
     list_display = ('cargodesempenado', 'nombrempresa', 'fechainiciogestion', 'fechafingestion')
     search_fields = ('cargodesempenado', 'nombrempresa')
     list_filter = ('activarparaqueseveaenfront',)
+    
     
     formfield_overrides = {
         models.DateField: {'widget': FechaInputWidget()},
@@ -116,12 +127,12 @@ class ExperienciaLaboralAdmin(admin.ModelAdmin):
         ('Contacto Empresarial', {
             'fields': ('nombrecontactoempresarial', 'telefonocontactoempresarial')
         }),
-        ('Otros', {
+('Otros', {
             'fields': ('idperfilconqueestaactivo', 'activarparaqueseveaenfront', 'rutacertificado')
         }),
     )
 
-    def save_model(self, request, obj, form, change):
+def save_model(self, request, obj, form, change):
         """Bloquea el guardado si hay validaciones fallidas"""
         try:
             obj.full_clean()
@@ -132,6 +143,14 @@ class ExperienciaLaboralAdmin(admin.ModelAdmin):
                 for err_msg in error:
                     messages.error(request, f'{field}: {err_msg}')
             raise
+        except Exception as e:
+            from django.contrib import messages
+            error_msg = str(e)
+            if 'AuthenticationFailed' in error_msg or 'ClientAuthenticationError' in error_msg:
+                messages.error(request, '❌ Error de autenticación con Azure Storage. Verifique las credenciales.')
+            else:
+                messages.error(request, f'❌ Error al guardar: {error_msg}')
+            raise
 
 # ==================== ADMIN: Reconocimientos ====================
 @admin.register(Reconocimientos)
@@ -139,6 +158,7 @@ class ReconocimientosAdmin(admin.ModelAdmin):
     list_display = ('descripcionreconocimiento', 'tiporeconocimiento', 'fechareconocimiento')
     search_fields = ('descripcionreconocimiento', 'tiporeconocimiento')
     list_filter = ('activarparaqueseveaenfront',)
+    
     
     formfield_overrides = {
         models.DateField: {'widget': FechaInputWidget()},
@@ -162,12 +182,12 @@ class ReconocimientosAdmin(admin.ModelAdmin):
         ('Entidad Patrocinadora', {
             'fields': ('entidadpatrocinadora', 'nombrecontactoauspicia', 'telefonocontactoauspicia')
         }),
-        ('Otros', {
+('Otros', {
             'fields': ('idperfilconqueestaactivo', 'activarparaqueseveaenfront', 'rutacertificado')
         }),
     )
 
-    def save_model(self, request, obj, form, change):
+def save_model(self, request, obj, form, change):
         """Bloquea el guardado si hay validaciones fallidas"""
         try:
             obj.full_clean()
@@ -178,6 +198,14 @@ class ReconocimientosAdmin(admin.ModelAdmin):
                 for err_msg in error:
                     messages.error(request, f'{field}: {err_msg}')
             raise
+        except Exception as e:
+            from django.contrib import messages
+            error_msg = str(e)
+            if 'AuthenticationFailed' in error_msg or 'ClientAuthenticationError' in error_msg:
+                messages.error(request, '❌ Error de autenticación con Azure Storage. Verifique las credenciales.')
+            else:
+                messages.error(request, f'❌ Error al guardar: {error_msg}')
+            raise
 
 # ==================== ADMIN: CursosRealizados ====================
 @admin.register(CursosRealizados)
@@ -185,6 +213,7 @@ class CursosRealizadosAdmin(admin.ModelAdmin):
     list_display = ('nombrecurso', 'fechainicio', 'fechafin', 'totalhoras')
     search_fields = ('nombrecurso', 'entidadpatrocinadora')
     list_filter = ('activarparaqueseveaenfront',)
+    
     
     formfield_overrides = {
         models.DateField: {'widget': FechaInputWidget()},
@@ -218,16 +247,19 @@ class CursosRealizadosAdmin(admin.ModelAdmin):
                 '</div>'
             )
         }),
-        ('Otros', {
+('Otros', {
             'fields': ('idperfilconqueestaactivo', 'activarparaqueseveaenfront', 'rutacertificado')
         }),
     )
 
+    @transaction.atomic
     def save_model(self, request, obj, form, change):
         """🚫 BLOQUEANTE: Impide guardar si hay errores de validación"""
         try:
+            # Validar antes de guardar
             obj.full_clean()
-            super().save_model(request, obj, form, change)
+            # Guardar usando save_base para evitar doble validación
+            obj.save_base(force_insert=not change, force_update=change)
             from django.contrib import messages
             messages.success(request, '✅ Curso guardado correctamente con todas las validaciones')
         except ValidationError as e:
@@ -272,12 +304,37 @@ class ProductosLaboralesAdmin(admin.ModelAdmin):
                 '</div>'
             )
         }),
-        ('Otros', {
-            'fields': ('idperfilconqueestaactivo', 'activarparaqueseveaenfront')
+        ('Configuración', {
+            'fields': ('activarparaqueseveaenfront',),
         }),
     )
 
     def save_model(self, request, obj, form, change):
+        """Asigna automáticamente el perfil activo si no se seleccionó y valida antes de guardar."""
+        from django.contrib import messages
+        try:
+            # Asignar perfil activo por defecto si no viene informado
+            if not getattr(obj, 'idperfilconqueestaactivo_id', None):
+                perfil = DatosPersonales.objects.filter(perfilactivo=1).first()
+                if not perfil:
+                    raise ValidationError({'idperfilconqueestaactivo': 'No existe un perfil activo para asociar.'})
+                obj.idperfilconqueestaactivo = perfil
+
+            obj.full_clean()
+            super().save_model(request, obj, form, change)
+            messages.success(request, '✅ Producto laboral guardado correctamente.')
+        except ValidationError as e:
+            from django.contrib import messages
+            for field, err_list in e.error_dict.items():
+                for err in err_list:
+                    messages.error(request, f'{field}: {err}')
+            raise
+        except Exception as e:
+            from django.contrib import messages
+            messages.error(request, f'❌ Error al guardar: {e}')
+            raise
+
+def save_model(self, request, obj, form, change):
         """Bloquea el guardado si hay validaciones fallidas"""
         try:
             obj.full_clean()
@@ -288,13 +345,35 @@ class ProductosLaboralesAdmin(admin.ModelAdmin):
                 for err_msg in error:
                     messages.error(request, f'{field}: {err_msg}')
             raise
+        except Exception as e:
+            from django.contrib import messages
+            error_msg = str(e)
+            if 'AuthenticationFailed' in error_msg or 'ClientAuthenticationError' in error_msg:
+                messages.error(request, '❌ Error de autenticación con Azure Storage. Verifique las credenciales.')
+            else:
+                messages.error(request, f'❌ Error al guardar: {error_msg}')
+            raise
 
 # ==================== ADMIN: VentaGarage ====================
 @admin.register(VentaGarage)
 class VentaGarageAdmin(admin.ModelAdmin):
-    list_display = ('nombreproducto', 'estadoproducto', 'valordelbien')
+    list_display = ('nombreproducto', 'estadoproducto', 'disponible', 'valordelbien')
     search_fields = ('nombreproducto', 'estadoproducto')
-    list_filter = ('activarparaqueseveaenfront',)
+    list_filter = ('disponible', 'activarparaqueseveaenfront')
+    
+fieldsets = (
+        ('Información Básica', {
+            'fields': ('nombreproducto', 'descripcion', 'estadoproducto', 'valordelbien', 'disponible')
+        }),
+        ('Fotos del Producto', {
+            'fields': ('foto', 'foto2', 'foto3'),
+            'description': 'Agregue hasta 3 fotos del producto. Las fotos se mostrarán en un carrusel.'
+        }),
+        ('Configuración', {
+            'fields': ('idperfilconqueestaactivo', 'activarparaqueseveaenfront'),
+            'classes': ('collapse',)
+        }),
+    )
 
 
 # ==================== ADMIN: ConfiguracionVisibilidad ====================
@@ -383,9 +462,13 @@ class ConfiguracionVisibilidadAdmin(admin.ModelAdmin):
     
     contar_secciones_activas.short_description = 'Estado de Secciones'
     
+    @transaction.atomic
     def save_model(self, request, obj, form, change):
         """Guardar y mostrar mensaje de confirmación"""
-        super().save_model(request, obj, form, change)
+        # Validar antes de guardar
+        obj.full_clean()
+        # Guardar usando save_base para evitar doble validación
+        obj.save_base(force_insert=not change, force_update=change)
         
         from django.contrib import messages
         activas = obj.contar_secciones_activas()

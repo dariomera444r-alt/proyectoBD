@@ -1,0 +1,715 @@
+{% load static %}
+{% load azure_tags %}
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>Tienda - Venta de Productos</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --secondary: #7c3aed;
+      --dark: #0f172a;
+      --dark-light: #1e293b;
+      --light: #f8fafc;
+      --light-gray: #e2e8f0;
+      --gray: #94a3b8;
+      --white: #ffffff;
+      --success: #10b981;
+      --danger: #ef4444;
+      --warning: #fbbf24;
+      --shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+      --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.12);
+      --radius: 12px;
+      --radius-lg: 20px;
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      font-size: 15px;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: linear-gradient(135deg, #060a13 0%, #0b1220 100%);
+      color: #e5e7eb;
+      line-height: 1.6;
+      padding: 20px;
+      min-height: 100vh;
+    }
+
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px;
+      background: rgba(15, 23, 42, 0.8);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      border-radius: var(--radius-lg);
+      margin-bottom: 40px;
+    }
+
+    .navbar-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--white);
+    }
+
+    .navbar-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: var(--radius);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+      background: var(--dark-light);
+      color: var(--light-gray);
+      border: 1px solid var(--light-gray);
+    }
+
+    .btn-secondary:hover {
+      background: var(--gray);
+      color: var(--white);
+    }
+
+    .btn-danger {
+      background: var(--danger);
+      color: white;
+      font-size: 12px;
+      padding: 8px 12px;
+    }
+
+    .btn-danger:hover {
+      background: #dc2626;
+    }
+
+    .btn-edit {
+      background: var(--primary);
+      color: white;
+      font-size: 12px;
+      padding: 8px 12px;
+    }
+
+    .btn-edit:hover {
+      background: var(--primary-dark);
+    }
+
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 25px;
+      margin-bottom: 40px;
+    }
+
+    .product-card {
+      background: rgba(30, 41, 59, 0.6);
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      transition: var(--transition);
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    .product-card:hover {
+      border-color: var(--primary);
+      box-shadow: var(--shadow-lg);
+      transform: translateY(-4px);
+    }
+
+    .product-image-container {
+      width: 100%;
+      height: 220px;
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.1) 0%, rgba(124, 58, 237, 0.1) 100%);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    }
+
+    .product-image-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      object-position: center;
+      padding: 10px;
+      display: block;
+    }
+
+    .carousel-wrapper {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    .carousel {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .carousel-item {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      transition: opacity 0.5s ease-in-out;
+    }
+
+    .carousel-item.active {
+      opacity: 1;
+    }
+
+    .carousel-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      object-position: center;
+      padding: 10px;
+    }
+
+    .carousel-controls {
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 8px;
+      z-index: 10;
+    }
+
+    .carousel-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.5);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .carousel-dot.active {
+      background: var(--white);
+      width: 24px;
+      border-radius: 4px;
+    }
+
+    .carousel-nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0, 0, 0, 0.4);
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      cursor: pointer;
+      font-size: 16px;
+      z-index: 10;
+      transition: background 0.3s ease;
+      border-radius: 4px;
+    }
+
+    .carousel-nav:hover {
+      background: rgba(0, 0, 0, 0.6);
+    }
+
+    .carousel-nav.prev {
+      left: 8px;
+    }
+
+    .carousel-nav.next {
+      right: 8px;
+    }
+
+    .product-image-placeholder {
+      color: var(--gray);
+      font-size: 14px;
+      text-align: center;
+    }
+
+    .product-content {
+      padding: 20px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .product-header {
+      margin-bottom: 12px;
+    }
+
+    .product-name {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--white);
+      margin-bottom: 5px;
+    }
+
+    .product-description {
+      font-size: 13px;
+      color: var(--gray);
+      line-height: 1.5;
+      margin-bottom: 15px;
+      flex: 1;
+    }
+
+    .product-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 15px;
+      border-top: 1px solid rgba(148, 163, 184, 0.2);
+    }
+
+    .product-price {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .product-status {
+      font-size: 12px;
+      font-weight: 600;
+      padding: 5px 10px;
+      border-radius: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .status-available {
+      background: rgba(16, 185, 129, 0.2);
+      color: #10b981;
+    }
+
+    .status-sold {
+      background: rgba(239, 68, 68, 0.2);
+      color: #ef4444;
+    }
+
+    .status-reserved {
+      background: rgba(251, 191, 36, 0.2);
+      color: #fbbf24;
+    }
+
+    .product-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--gray);
+    }
+
+    .empty-state-icon {
+      font-size: 48px;
+      margin-bottom: 20px;
+    }
+
+    .empty-state-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--white);
+      margin-bottom: 10px;
+    }
+
+    .empty-state-text {
+      font-size: 14px;
+      color: var(--gray);
+      margin-bottom: 30px;
+    }
+
+    /* Modal styles */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(4px);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal {
+      background: var(--dark-light);
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      border-radius: var(--radius-lg);
+      max-width: 500px;
+      width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 30px;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .modal-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 25px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--light-gray);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .form-input,
+    .form-textarea,
+    .form-select {
+      width: 100%;
+      padding: 12px;
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      border-radius: var(--radius);
+      color: var(--white);
+      font-size: 14px;
+      font-family: inherit;
+      transition: var(--transition);
+    }
+
+    .form-input:focus,
+    .form-textarea:focus,
+    .form-select:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+
+    .form-textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    .form-file-input {
+      padding: 15px;
+      border: 2px dashed rgba(148, 163, 184, 0.3);
+      border-radius: var(--radius);
+      text-align: center;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .form-file-input:hover {
+      border-color: var(--primary);
+      background: rgba(37, 99, 235, 0.05);
+    }
+
+    .form-file-input input[type="file"] {
+      display: none;
+    }
+
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .checkbox-input {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 30px;
+    }
+
+    .modal-actions .btn {
+      flex: 1;
+      text-align: center;
+      justify-content: center;
+    }
+
+    .form-errors {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid var(--danger);
+      border-radius: var(--radius);
+      padding: 12px;
+      margin-bottom: 20px;
+      color: #fca5a5;
+      font-size: 13px;
+    }
+
+    .form-errors ul {
+      margin: 0;
+      padding-left: 20px;
+    }
+
+    .form-errors li {
+      margin: 4px 0;
+    }
+
+    .success-message {
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid var(--success);
+      border-radius: var(--radius);
+      padding: 12px;
+      margin-bottom: 20px;
+      color: #6ee7b7;
+      font-size: 13px;
+    }
+
+    .delete-confirmation {
+      text-align: center;
+      padding: 40px 20px;
+    }
+
+    .delete-confirmation-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 15px;
+    }
+
+    .delete-confirmation-text {
+      color: var(--gray);
+      margin-bottom: 30px;
+      font-size: 14px;
+    }
+
+    .delete-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+    }
+
+    .delete-actions form {
+      flex: 1;
+    }
+
+    .delete-actions .btn {
+      width: 100%;
+    }
+
+    @media (max-width: 768px) {
+      .products-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 15px;
+      }
+
+      .navbar {
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .modal {
+        width: 95%;
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<div class="navbar">
+  <div class="navbar-title">Tienda de Productos</div>
+  <div class="navbar-actions">
+    <a href="{% url 'hoja_vida' %}" class="btn btn-secondary">Volver al CV</a>
+  </div>
+</div>
+
+<!-- Main content -->
+<div class="container" style="max-width: 1400px; margin: 0 auto;">
+  
+  <!-- Catálogo de productos -->
+  {% if garage %}
+      <div class="products-grid">
+        {% for producto in garage %}
+          <div class="product-card">
+            <div class="product-image-container">
+              {% with fotos=producto.get_fotos %}
+                {% if fotos %}
+                  {% if fotos|length > 1 %}
+                    <!-- Carrusel si hay múltiples fotos -->
+                    <div class="carousel-wrapper">
+                      <div class="carousel" data-product-id="{{ producto.idventagarage }}">
+                        {% for field_name, foto_obj in fotos %}
+                          <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                            <img src="{% azure_file_url producto field_name %}?v={{ producto.idventagarage }}" alt="{{ producto.nombreproducto }}">
+                          </div>
+                        {% endfor %}
+                      </div>
+                      <button class="carousel-nav prev" onclick="carouselPrev({{ producto.idventagarage }})">❮</button>
+                      <button class="carousel-nav next" onclick="carouselNext({{ producto.idventagarage }})">❯</button>
+                      <div class="carousel-controls">
+                        {% for field_name, foto_obj in fotos %}
+                          <div class="carousel-dot {% if forloop.first %}active{% endif %}" onclick="carouselGoto({{ producto.idventagarage }}, {{ forloop.counter0 }})"></div>
+                        {% endfor %}
+                      </div>
+                    </div>
+                  {% else %}
+                    <!-- Imagen única sin controles -->
+                    {% for field_name, foto_obj in fotos %}
+                      <img src="{% azure_file_url producto field_name %}?v={{ producto.idventagarage }}" alt="{{ producto.nombreproducto }}">
+                    {% endfor %}
+                  {% endif %}
+                {% else %}
+                  <div class="product-image-placeholder">Sin imagen</div>
+                {% endif %}
+              {% endwith %}
+            </div>
+            
+            <div class="product-content">
+              <div class="product-header">
+                <h3 class="product-name">{{ producto.nombreproducto }}</h3>
+              </div>
+              
+              <p class="product-description">{{ producto.descripcion }}</p>
+              
+              <div class="product-footer">
+                <div class="product-price">${{ producto.valordelbien }}</div>
+                <div class="product-status {% if producto.estadoproducto == 'Disponible' %}status-available{% elif producto.estadoproducto == 'Vendido' %}status-sold{% elif producto.estadoproducto == 'Reservado' %}status-reserved{% endif %}">
+                  {{ producto.estadoproducto|default:"Sin estado" }}
+                </div>
+              </div>
+
+              <div style="display: flex; align-items: center; gap: 10px; margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(148, 163, 184, 0.2);">
+                <span style="font-size: 12px; color: var(--gray);">Estado:</span>
+                <span style="font-size: 12px; font-weight: 600; padding: 4px 8px; border-radius: 6px; {% if producto.disponible %}background: rgba(16, 185, 129, 0.2); color: #10b981;{% else %}background: rgba(239, 68, 68, 0.2); color: #ef4444;{% endif %}">
+                  {% if producto.disponible %}Disponible{% else %}No disponible{% endif %}
+                </span>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="empty-state">
+        <div class="empty-state-icon">📦</div>
+        <div class="empty-state-title">Sin productos aún</div>
+        <div class="empty-state-text">No hay productos disponibles en este momento</div>
+      </div>
+    {% endif %}
+</div>
+
+<script>
+  // Funciones para el carrusel
+  const carousels = {};
+
+  function initCarousels() {
+    document.querySelectorAll('.carousel').forEach(carousel => {
+      const productId = carousel.dataset.productId;
+      const items = carousel.querySelectorAll('.carousel-item');
+      carousels[productId] = {
+        element: carousel,
+        currentIndex: 0,
+        totalItems: items.length
+      };
+    });
+  }
+
+  function carouselGoto(productId, index) {
+    if (!carousels[productId]) return;
+    
+    const carousel = carousels[productId];
+    const element = carousel.element;
+    const items = element.querySelectorAll('.carousel-item');
+    const dots = element.parentElement.querySelectorAll('.carousel-dot');
+
+    items.forEach(item => item.classList.remove('active'));
+    dots.forEach(dot => dot.classList.remove('active'));
+
+    items[index].classList.add('active');
+    dots[index].classList.add('active');
+
+    carousel.currentIndex = index;
+  }
+
+  function carouselNext(productId) {
+    if (!carousels[productId]) return;
+    
+    const carousel = carousels[productId];
+    let nextIndex = carousel.currentIndex + 1;
+    
+    if (nextIndex >= carousel.totalItems) {
+      nextIndex = 0;
+    }
+
+    carouselGoto(productId, nextIndex);
+  }
+
+  function carouselPrev(productId) {
+    if (!carousels[productId]) return;
+    
+    const carousel = carousels[productId];
+    let prevIndex = carousel.currentIndex - 1;
+    
+    if (prevIndex < 0) {
+      prevIndex = carousel.totalItems - 1;
+    }
+
+    carouselGoto(productId, prevIndex);
+  }
+
+  // Inicializar carruseles cuando el DOM esté listo
+  document.addEventListener('DOMContentLoaded', initCarousels);
+</script>
+
+</body>
+</html>
